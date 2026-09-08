@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cloud-Native 全端應用（GKE）— Tzu-Huan Peng</title>
+<meta name="description" content="把 React/Vite、Express/Prisma、PostgreSQL 三層式應用容器化，部署到 GKE Autopilot，並用 GitHub Actions 打造完整 CI/CD 流程，加上 HPA 負載測試與資料庫故障演練。">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbfbfd">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☸️</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="../index.html"><span class="brand__mark">H</span>Huan</a>
+    <a class="back" href="../index.html#projects">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5L4.5 8l5.5 4.5"/></svg>
+      回作品列表
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap hero" style="--hue:var(--indigo)">
+    <p class="eyebrow">01 · Selected Work · 2025</p>
+    <h1>Cloud-Native 全端應用（GKE）</h1>
+    <p class="hero__lede">
+      把一個 Todo List 應用——<strong>Vite + React 前端、Node.js + Express 後端、
+      Prisma + PostgreSQL 資料層</strong>——完整走過容器化、Kubernetes 部署、
+      CI/CD 自動化、可觀測性與三場故障演練的每一步，目標是「Build Once, Run Anywhere」：
+      同一套 code 與 manifests，本機 kind、GKE 都能任意部署。
+    </p>
+
+    <div class="meta-row">
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><ellipse cx="8" cy="4" rx="5.5" ry="2.2"/><path d="M2.5 4v8c0 1.2 2.5 2.2 5.5 2.2s5.5-1 5.5-2.2V4"/><path d="M2.5 8c0 1.2 2.5 2.2 5.5 2.2s5.5-1 5.5-2.2"/></svg>
+        Google Kubernetes Engine（Autopilot）
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+        個人專案
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.4"/></svg>
+        2025 — 2026
+      </span>
+    </div>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="https://github.com/huan131513/CloudeNative_practice" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        在 GitHub 查看原始碼
+      </a>
+    </div>
+
+    <div class="cover">
+      <img src="assets/cn-01-overview.jpg" alt="專案總覽：左邊是 Todo List 應用截圖，右邊列出 Application Stack（Vite+React 前端、Node.js+Express 後端、PostgreSQL 資料庫、Prisma ORM）與 DevOps & Operations（Vitest/Playwright 測試、Docker/Docker Compose 容器、kind/GKE、GitHub Actions CI/CD、Prometheus+Grafana 觀測）">
+    </div>
+  </div>
+
+  <div class="wrap content" style="--hue:var(--indigo)">
+
+    <h2>專案總覽</h2>
+    <div class="prose">
+      <p>
+        應用本身是一個 Todo List：<strong>Vite + React</strong> 前端、<strong>Node.js + Express</strong> 後端、
+        <strong>Prisma</strong> 作為 ORM 存取 <strong>PostgreSQL</strong>。真正的重點不在「做一個 Todo App」，
+        而在它背後完整的維運能力——測試、容器化、Kubernetes 部署、CI/CD、可觀測性，
+        以及最後拿真實故障場景驗證這套系統到底禁不禁得起壓。
+      </p>
+    </div>
+    <div class="tags">
+      <span class="tag">Vite</span><span class="tag">React</span><span class="tag">Node.js</span>
+      <span class="tag">Express</span><span class="tag">Prisma</span><span class="tag">PostgreSQL</span>
+      <span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">GKE Autopilot</span>
+      <span class="tag">GitHub Actions</span><span class="tag">Prometheus</span><span class="tag">Grafana</span>
+    </div>
+
+    <h2>測試策略</h2>
+    <div class="prose">
+      <p>
+        測試分成好幾層，每一層都對應一個實際可能出錯的地方：<strong>Backend API</strong>
+        用 Vitest 覆蓋 GET/POST/PUT/DELETE 的成功與錯誤情境（11 個測試）、
+        <strong>DB Smoke</strong> 用 Prisma 的 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">$queryRaw</code>
+        驗證資料庫連線本身是活的、<strong>Frontend 元件</strong>用 Vitest + jsdom 驗證渲染與 mock fetch、
+        <strong>ESLint Gate</strong> 擋掉不合規範的程式碼、<strong>E2E Flow</strong> 用 Playwright 跑過
+        「開頁 → 新增 → 顯示 → 勾選 → 刪除」完整使用者流程、<strong>Docker Build</strong> 在 CI 裡驗證
+        多階段建置可以成功，最後 <strong>Readiness Probe</strong>（<code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">/ready</code>）
+        專門用來檢查資料庫連線，直接對接後面的故障演練。
+      </p>
+    </div>
+    <div class="figure">
+      <img src="assets/cn-02-testing.jpg" alt="測試矩陣表格與 CI Gates 結果：test-backend、test-frontend、build-and-push 全部 PASS；程式碼覆蓋率 Branch 100%、Statements 88.37%、Functions 71.42%、Lines 88.37%；Playwright E2E todo.spec.js 1 passed。">
+      <figcaption>CI Gates 全綠、覆蓋率 Branch 100% / Stmts 88.37% / Funcs 71.42% / Lines 88.37%</figcaption>
+    </div>
+
+    <h2>Docker 容器化</h2>
+    <div class="prose">
+      <p>
+        前後端都採用<strong>多階段建置（multi-stage build）</strong>：Builder 階段負責裝依賴、跑
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">npx prisma generate</code>，
+        Runtime 階段只留執行必要的檔案，並以非 root 的 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">USER node</code> 執行，
+        兼顧 <strong>image 體積更小、執行更安全</strong>；再搭配 layer 快取順序優化，讓每次重建的安裝速度更快。
+        本機用 Docker Compose 起三個服務（frontend / backend / postgres），彼此在同一個 network 裡用
+        service name 互相呼叫，資料寫進掛載的 host volume，容器重生資料還在。
+      </p>
+    </div>
+    <div class="figure">
+      <img src="assets/cn-03-docker.jpg" alt="Docker 多階段建置示意：Builder 階段安裝依賴與 Prisma generate，Runtime 階段只保留執行檔並用 USER node 執行；右側是 Docker Desktop 的 Port Mapping 與 Compose Network 示意，frontend/backend/postgres 三個服務透過 service name 互連。">
+      <figcaption>多階段 build → image 更小；USER node → 更安全；layer 快取 → 安裝更快</figcaption>
+    </div>
+
+    <h2>Kubernetes 部署架構</h2>
+    <div class="prose">
+      <p>
+        對外只有一個 <strong>Ingress</strong>，依路徑分流：<code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">/</code>
+        導到 frontend、<code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">/api</code>
+        導到 backend。前後端都各自是 <strong>Deployment（replicas=2）</strong>，由 Service 用
+        selector 輪流分流到兩個 Pod 副本。backend 的 Pod 在啟動前會先跑一個
+        <strong>initContainer</strong> 執行 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">prisma migrate deploy</code>，
+        確保 schema 是最新的才讓主容器起來；環境變數 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">DATABASE_URL</code>
+        來自 Secret、<code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">PORT</code>
+        來自 ConfigMap，並掛 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">/health</code>
+        health probe。資料庫則是 <strong>postgres StatefulSet</strong>，兩個 backend 副本都連到同一個
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">postgres:5432</code>，
+        資料寫進共用的 PVC → PV，Pod 重生資料還在。
+      </p>
+    </div>
+    <div class="gallery">
+      <div class="figure">
+        <img src="assets/cn-04-k8s-overview.jpg" alt="整體 K8s 架構：瀏覽器透過 Mac host port 80 進到 kind node，Ingress 依路徑把 / 導向 frontend Service、/api 導向 backend Service，再連到各自的 Pod；backend 額外連到 Secret/ConfigMap 與 postgres StatefulSet，最後寫進 PVC/PV 持久化。">
+        <figcaption>整體架構：瀏覽器 → Ingress → Service → Pod → postgres（PVC/PV）</figcaption>
+      </div>
+      <div class="figure">
+        <img src="assets/cn-04-k8s-detail.jpg" alt="backend 與 frontend 各自的細節：backend Deployment replicas=2，每個 Pod 有 initContainer 跑 prisma migrate deploy 與主容器 node（containerPort 3000, probe /health），兩個副本共用同一個 postgres StatefulSet；frontend Deployment replicas=2，每個 Pod 是 nginx 容器送出已經烤進 API URL 的靜態檔。">
+        <figcaption>backend／frontend 的 Deployment 細節：initContainer migration、readiness probe、共用資料庫</figcaption>
+      </div>
+    </div>
+
+    <h2>CI/CD：Build Once, Run Anywhere</h2>
+    <div class="prose">
+      <p>
+        每次 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">git push</code>，
+        GitHub Actions 平行跑 <strong>test-backend</strong>（Vitest + Postgres service）與
+        <strong>test-frontend</strong>（ESLint + Vitest），兩者都過才會繼續往下走
+        <strong>build-and-push</strong>（多階段 Docker build，推到 Artifact Registry，
+        同時打上 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">:latest</code>
+        與 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">:SHA</code>
+        兩個 tag），最後 <strong>deploy</strong> 用 Workload Identity Federation 認證，執行
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">kubectl set image :SHA</code>
+        並確認 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">rollout status</code>
+        零停機，部署到 GKE Autopilot 完成滾動更新。整個設計的核心是<strong>「一套 code + manifests，
+        本機 / kind / GKE 都能部署」</strong>——本機用 kind 驗證過的東西，理論上直接部署到雲端也會是同樣的行為。
+      </p>
+    </div>
+    <div class="figure">
+      <img src="assets/cn-05-cicd.jpg" alt="CI/CD 流程圖：git push 觸發 GitHub Actions，test-backend 與 test-frontend 平行跑，兩者都過（needs gate）才進 build-and-push 做多階段 Docker build 並推到 Artifact Registry，接著 deploy 用 WIF 認證執行 kubectl set image 與 rollout status 零停機部署，最後上線到 GKE Autopilot。">
+      <figcaption>test-backend / test-frontend → build-and-push → deploy（WIF + rollout，零停機）→ GKE Autopilot</figcaption>
+    </div>
+
+    <h2>可觀測性（Prometheus + Grafana）</h2>
+    <div class="prose">
+      <p>
+        Dashboard 追蹤 <strong>CPU 使用率、記憶體使用率、Pod 數量</strong>三個核心指標，
+        用途包括容量規劃、異常偵測、支撐 HPA 的擴縮容決策，以及作為後面故障演練的觀測依據——
+        沒有可觀測性，故障演練頂多只能「看起來有修好」，沒辦法真正拿數據證明系統的行為。
+      </p>
+    </div>
+    <div class="figure">
+      <img src="assets/cn-06-dashboard.jpg" alt="Grafana Dashboard：CPU Utilisation、Memory Utilisation、CPU Usage 折線圖、CPU Request/Limit、Memory 折線圖等多張面板，即時顯示各 Pod 的資源使用狀況。">
+      <figcaption>Grafana：CPU / 記憶體使用率、Pod 數量——容量規劃、異常偵測、支撐 HPA、災難演練</figcaption>
+    </div>
+
+    <h2>三場 Disaster Recovery Drill</h2>
+    <div class="prose">
+      <p>
+        部署完成不代表結束。我設計了三場故障演練，分別打向<strong>資料層、應用層、負載層</strong>，
+        目的是拿真實的失效場景驗證系統的自我修復能力，而不是只憑感覺相信「Kubernetes 應該會自動處理」。
+      </p>
+    </div>
+
+    <div class="callout">
+      <p><strong>演練一・資料層：強制停止 postgres pod</strong></p>
+      <p>把 postgres 的 replica 設成 0，模擬資料庫掛掉。後端沒有直接跟著停機，只是暫時被移出流量，
+      前端會收到 <code style="font-family:var(--font-mono);font-size:.9em">503 Service Temporarily Unavailable</code>；
+      把 replica 設回 1，kind 自動把後端拉回 Running。</p>
+    </div>
+    <div class="figure">
+      <img src="assets/cn-07-dr1.jpg" alt="演練一截圖：postgres pod 從 1/1 Running 變成 backend pod 0/1，前端出現 503 Service Temporarily Unavailable 與 JSON parse 錯誤；右側 Grafana 折線圖顯示 replica 數量從 2 掉到 0 再回升到 2。">
+      <figcaption>postgres 掛掉 → backend 503（不是直接崩潰）→ 資料庫恢復後自動 running</figcaption>
+    </div>
+
+    <div class="callout">
+      <p><strong>演練二・應用層：強制刪除 backend pod</strong></p>
+      <p>強制刪除其中一個 backend pod，觀察 Kubernetes 會不會自動補回、服務會不會中斷。
+      結果證明：在多副本結構下，就算一個 Pod 掛掉，系統依然能正常運作，K8s 也會自動把 Pod 數量補回設定值。</p>
+    </div>
+    <div class="figure">
+      <img src="assets/cn-08-dr2.jpg" alt="演練二截圖：kubectl get pods -l app=backend -w 顯示被刪除的 Pod 經歷 Pending → Init:0/1 → PodInitializing → Running，最終兩個 backend Pod 都恢復 1/1 Running。">
+      <figcaption>殺掉一個 backend Pod → K8s 自動重建 → 服務全程不中斷</figcaption>
+    </div>
+
+    <div class="callout">
+      <p><strong>演練三・負載層：流量暴增觀察 CPU 自動擴縮</strong></p>
+      <p>套用 HPA（min 2 / max 10 / 目標 CPU 50%），灌壓力測試流量讓 CPU 飆升，
+      觀察 HPA 自動把 backend 從 2 個副本擴到 10 個；流量退去後又自動縮回。</p>
+    </div>
+    <div class="figure">
+      <img src="assets/cn-09-dr3.jpg" alt="演練三截圖：Grafana CPU Usage 折線圖隨壓力測試流量上升成山形；下方表格顯示 HPA 目標 backend Deployment 的 CPU 使用率從 5% 一路飆到 431%，REPLICAS 欄位隨之從 2 增加到 4、8、10，流量退去後又緩慢降回 10 附近。">
+      <figcaption>HPA min 2 / max 10 / CPU 50% → 尖峰流量下自動擴到 10 個副本，退流量後自動縮回</figcaption>
+    </div>
+
+    <div class="callout">
+      <p><strong>學到的事：</strong>把應用部署到 Kubernetes 只是起點，真正的功課是「它在壓力下會怎麼樣」——
+      資料庫斷線後後端會不會優雅降級、單一 Pod 掛掉服務會不會中斷、流量暴增時 HPA 擴容夠不夠快，
+      這些都要親手打壞一次系統、用 Dashboard 上的數字驗證，才算真正確認過。</p>
+    </div>
+
+  </div>
+
+  <nav class="proj-nav wrap">
+    <a class="prev" href="cuda-parallel.html">
+      <span class="dir">↑ 上一個</span>
+      <span class="title">CUDA 高效能平行運算</span>
+    </a>
+    <a class="next" href="pattern-mining.html">
+      <span class="dir">下一個 ↓</span>
+      <span class="title">增量資料庫可擦除樣式探勘</span>
+    </a>
+  </nav>
+</main>
+
+<footer class="wrap">
+  <span>© <span id="year">2026</span> Huan（Peng Tzu-Huan）</span>
+  <a href="../index.html#projects">回作品列表</a>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

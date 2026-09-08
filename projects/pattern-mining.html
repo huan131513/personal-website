@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>增量資料庫可擦除樣式探勘 — Tzu-Huan Peng</title>
+<meta name="description" content="Dynamic Removable Pattern Mining：可動態增加資料庫的樣式探勘演算法，計算商品利潤並找出值得捆綁銷售的組合，總利潤較使用前上升 34%。">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbfbfd">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="../index.html"><span class="brand__mark">H</span>Huan</a>
+    <a class="back" href="../index.html#projects">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5L4.5 8l5.5 4.5"/></svg>
+      回作品列表
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap hero" style="--hue:var(--teal)">
+    <p class="eyebrow">02 · Selected Work · 2024 — Dynamic Removable Pattern Mining</p>
+    <h1>增量資料庫可擦除樣式探勘</h1>
+    <p class="hero__lede">
+      零售商想知道「哪些商品利潤太低、可以跟其他商品捆在一起賣」，但交易資料庫每天都在增長。
+      這個大學專題實作了一套<strong>可動態增加資料庫應用的樣式探勘演算法</strong>：
+      新的銷售記錄進來時，只需要針對新數據對原有結果的影響做調整，
+      不必把整個資料庫重新計算一次。
+    </p>
+
+    <div class="meta-row">
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M2.5 6h11M6 2.5v11"/></svg>
+        資料探勘 / 演算法
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+        國立中山大學・大四專題
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.4"/></svg>
+        2024
+      </span>
+    </div>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="https://github.com/huan131513" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        在 GitHub 查看原始碼
+      </a>
+    </div>
+
+    <div class="cover">
+      <img src="assets/pattern-mining-graph.jpg" alt="Graph Representation：最上層是單一商品節點 B、A、E、C、G、D、H、J、F；中間層是兩兩組合的節點如 ED、EF、CF、GH、GJ、GF、DJ、DF、HJ、HF、JF；底層是三個一組的節點如 EDF、GHJ、GHF、GJF、DJF、HJF，節點之間用連線表示樣式候選集合如何由小組合逐層擴展成大組合。">
+    </div>
+  </div>
+
+  <div class="wrap content" style="--hue:var(--teal)">
+
+    <h2>要解決的問題</h2>
+    <div class="prose">
+      <p>
+        零售商希望找出「單獨賣利潤很低、但如果跟某些商品一起賣就有利可圖」的商品組合——
+        這在資料探勘裡屬於<strong>可擦除樣式探勘（Removable / Erasable Pattern Mining）</strong>的範疇：
+        反過來找出利潤貢獻偏低、值得整併或搭配銷售的商品集合，
+        幫零售商決定哪些商品該捆綁販賣、哪些該優先下架。
+      </p>
+      <p>
+        真實的零售交易資料是<strong>持續增量</strong>的，每天都有新的銷售記錄進來。
+        如果每次分析都要把整個資料庫重新掃描、重新計算一次，成本會隨資料量不斷疊加。
+        這個專案要解決的正是這件事：讓樣式探勘的結果可以隨新資料到來<strong>動態更新</strong>，
+        而不是每次都从零開始。
+      </p>
+    </div>
+
+    <h2>演算法設計：可動態增加資料庫的應用</h2>
+    <div class="prose">
+      <p>
+        核心特色是<strong>「可動態增加資料庫之應用」</strong>：當新的銷售資料加入時，
+        演算法只需要針對<strong>新數據對原有資料的影響</strong>做調整，
+        不需要把整個資料庫重新計算一遍。候選商品組合以類似 lattice（格）的結構組織——
+        從單一商品開始，逐步往上組成兩兩配對、三個一組的組合，
+        每一層都只需要根據下一層已經算好的結果延伸，而不是每次都重新窮舉。
+      </p>
+    </div>
+    <div class="figure">
+      <img src="assets/pattern-mining-graph.jpg" alt="樣式候選集合的 Graph Representation：由單一商品節點逐層向下擴展成雙商品、三商品組合節點，箭頭表示組合關係。">
+      <figcaption>候選樣式的分層結構：單一商品 → 兩兩組合 → 三個一組，新資料只需增量更新受影響的節點</figcaption>
+    </div>
+    <div class="tags">
+      <span class="tag">Java</span><span class="tag">Python</span>
+      <span class="tag">Data Mining</span><span class="tag">Incremental Algorithm</span>
+    </div>
+
+    <h2>成果</h2>
+    <div class="prose">
+      <p>
+        我們實作了一套資料探勘演算法，能透過銷售記錄計算出<strong>每個商品的利潤</strong>，
+        並將商品交叉配對，找出<strong>利潤足夠高的商品組合</strong>，以同捆包的方式販賣。
+      </p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat__num">+34%</div>
+        <div class="stat__label">套用商品捆綁策略後，總利潤較使用前上升的幅度</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">增量</div>
+        <div class="stat__label">新資料加入時只需局部更新，不必重掃整個資料庫</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>學到的事：</strong>增量演算法真正的難點不在「怎麼算」，而在「怎麼確保只更新受影響的部分還能維持正確性」——
+      商品組合的候選集合會隨新資料擴張或收斂，資料結構如果設計得不好，
+      「增量」就只是名義上的，實際上還是得把很多東西重算一次。</p>
+    </div>
+
+  </div>
+
+  <nav class="proj-nav wrap">
+    <a class="prev" href="cloud-native.html">
+      <span class="dir">↑ 上一個</span>
+      <span class="title">Cloud-Native 全端應用（GKE）</span>
+    </a>
+    <a class="next" href="cuda-parallel.html">
+      <span class="dir">下一個 ↓</span>
+      <span class="title">CUDA 高效能平行運算</span>
+    </a>
+  </nav>
+</main>
+
+<footer class="wrap">
+  <span>© <span id="year">2026</span> Huan（Peng Tzu-Huan）</span>
+  <a href="../index.html#projects">回作品列表</a>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
