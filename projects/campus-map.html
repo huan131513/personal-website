@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>校園地圖 — Tzu-Huan Peng</title>
+<meta name="description" content="NTU poop：標示校園周邊廁所、無障礙廁所與哺乳室位置的互動地圖，依距離排序、依分類篩選。">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbfbfd">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="../index.html"><span class="brand__mark">H</span>Huan</a>
+    <a class="back" href="../index.html#projects">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5L4.5 8l5.5 4.5"/></svg>
+      回作品列表
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap hero" style="--hue:var(--rose)">
+    <p class="eyebrow">網頁系統 · Selected Work · 2026</p>
+    <h1>校園地圖</h1>
+    <p class="hero__lede">
+      <strong>NTU poop</strong>：一張標示校園周邊<strong>廁所、無障礙廁所與哺乳室</strong>位置的互動地圖，
+      收錄了 212 個地點，可依分類篩選、依距離排序，讓有急需的人能最快找到最近的設施。
+    </p>
+
+    <div class="meta-row">
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 14s5-4.2 5-8A5 5 0 0 0 3 6c0 3.8 5 8 5 8z"/><circle cx="8" cy="6" r="1.8"/></svg>
+        地圖 / 地理位置服務
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+        國立臺灣大學周邊
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.4"/></svg>
+        2026
+      </span>
+    </div>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="https://ntupoop.vercel.app/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9.5L13.5 2.5M13.5 2.5H9M13.5 2.5V7M12 9v3.5a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1H7"/></svg>
+        瀏覽網站
+      </a>
+      <a class="btn btn--ghost" href="https://github.com/huan131513/registeration_system_CJ" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        在 GitHub 查看原始碼
+      </a>
+    </div>
+
+    <div class="cover">
+      <img src="assets/campus-map-shot.jpg" alt="NTU poop 網站畫面：左側是分類篩選欄，列出所有設施（212）、廁所（156）、無障礙廁所（54）、哺乳室（2）四種分類，下方是依距離排序的地點列表；右側是地圖，上面用紅色、藍色、粉色圖示標出各廁所、無障礙廁所、哺乳室的位置。">
+    </div>
+  </div>
+
+  <div class="wrap content" style="--hue:var(--rose)">
+
+    <h2>要解決的問題</h2>
+    <div class="prose">
+      <p>
+        在校園裡臨時想找廁所、無障礙廁所或哺乳室，Google 地圖不一定標得完整，
+        也沒辦法一次篩選出「只看無障礙廁所」這種需求。這個專案把校園周邊這些設施
+        整理成一張<strong>可篩選、可依距離排序</strong>的互動地圖，讓有實際需求的人可以最快找到最近的地點。
+      </p>
+    </div>
+
+    <h2>功能設計</h2>
+    <div class="prose">
+      <p>
+        左側是<strong>分類篩選欄</strong>：所有設施、廁所、無障礙廁所、哺乳室，各分類旁邊直接顯示地點數量
+        （212 / 156 / 54 / 2），下方接著是依<strong>距離由近到遠排序</strong>的地點清單，
+        每筆都標出地點名稱、類型與距離。右側是主體地圖，用不同顏色的圖示（紅色廁所、藍色無障礙廁所、
+        粉色哺乳室）標出所有地點的實際位置，點擊篩選分類時地圖上的圖示也會同步過濾。
+      </p>
+    </div>
+    <div class="tags">
+      <span class="tag">Web</span><span class="tag">地圖 API</span><span class="tag">篩選 / 排序 UI</span>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat__num">212</div>
+        <div class="stat__label">收錄地點總數</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">156</div>
+        <div class="stat__label">一般廁所</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">54 + 2</div>
+        <div class="stat__label">無障礙廁所 + 哺乳室</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>設計重點：</strong>這類「找設施」的工具，使用情境往往帶點急迫性——
+      所以介面刻意把篩選與距離排序放在最顯眼的位置，讓使用者少點幾下就能找到最近的地點，
+      而不是先看一堆資訊再自己判斷。</p>
+    </div>
+
+  </div>
+
+  <nav class="proj-nav wrap">
+    <a class="prev" href="selection-system.html">
+      <span class="dir">↑ 上一個</span>
+      <span class="title">抽籤系統</span>
+    </a>
+    <a class="next" href="deadline-tracker.html">
+      <span class="dir">下一個 ↓</span>
+      <span class="title">作業預警系統</span>
+    </a>
+  </nav>
+</main>
+
+<footer class="wrap">
+  <span>© <span id="year">2026</span> Huan（Peng Tzu-Huan）</span>
+  <a href="../index.html#projects">回作品列表</a>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

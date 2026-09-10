@@ -438,18 +438,25 @@ section:last-of-type{padding-bottom:var(--section)}
 /* ════════════════════════════════════════════════════════════
    9. Projects
    ════════════════════════════════════════════════════════════ */
-.proj-grid{
+.proj-categories{display:flex; flex-direction:column; gap:clamp(32px, 5vw, 48px)}
+.proj-category__label{
+  display:flex; align-items:center; gap:9px;
+  font-family:var(--font-mono); font-size:12.5px; font-weight:600;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted);
+  margin-bottom:16px;
+}
+.proj-category__label::before{
+  content:""; width:7px; height:7px; border-radius:50%; flex:none;
+  background:var(--hue, var(--indigo));
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--hue, var(--indigo)) 14%, transparent);
+}
+.proj-row{
   display:grid; gap:18px;
   grid-template-columns:1fr;
+  justify-content:start;
 }
-/* tablet: two columns + one full-width feature, so nothing is orphaned */
-@media (min-width:720px){
-  .proj-grid{grid-template-columns:1fr 1fr}
-  .proj-grid > :last-child{grid-column:1 / -1}
-}
-@media (min-width:1000px){
-  .proj-grid{grid-template-columns:repeat(3, 1fr)}
-  .proj-grid > :last-child{grid-column:auto}
+@media (min-width:560px){
+  .proj-row{grid-template-columns:repeat(auto-fit, minmax(260px, 318px))}
 }
 .card{
   position:relative; overflow:hidden;
@@ -841,64 +848,136 @@ footer a:hover{color:var(--indigo)}
     <p class="eyebrow" style="--hue:var(--rose)">Selected Work</p>
     <h2 class="h2">作品</h2>
 
-    <div class="proj-grid" data-stagger data-tilt>
+    <div class="proj-categories" data-stagger data-tilt>
 
-      <a class="card" href="projects/cloud-native.html" style="--hue:var(--indigo)">
-        <div class="card__top">
-          <div class="card__badge">01</div>
-          <span class="card__year">2025</span>
-        </div>
-        <h3 class="card__title">Cloud-Native 全端應用（GKE） <span class="arrow">↗</span></h3>
-        <p class="card__desc">
-          把 React/Vite、Express/Prisma、PostgreSQL 三層式應用容器化，部署到 GKE Autopilot，
-          並用 GitHub Actions 打造從測試、多階段建置到 kubectl rollout 的 CI/CD 流程。
-        </p>
-        <span class="card__metric">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
-          HPA 負載測試 + 資料庫故障演練
-        </span>
-        <div class="tags">
-          <span class="tag">Kubernetes</span><span class="tag">Docker</span><span class="tag">CICD</span>
-        </div>
-      </a>
+      <div class="proj-category">
+        <p class="proj-category__label" style="--hue:var(--indigo)">網頁系統</p>
+        <div class="proj-row">
+          <a class="card" href="projects/cloud-native.html" style="--hue:var(--indigo)">
+            <div class="card__top">
+              <div class="card__badge">01</div>
+              <span class="card__year">2025</span>
+            </div>
+            <h3 class="card__title">Cloud-Native 全端應用（GKE） <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              把 React/Vite、Express/Prisma、PostgreSQL 三層式應用容器化，部署到 GKE Autopilot，
+              並用 GitHub Actions 打造從測試、多階段建置到 kubectl rollout 的 CI/CD 流程。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              HPA 負載測試 + 資料庫故障演練
+            </span>
+            <div class="tags">
+              <span class="tag">Kubernetes</span><span class="tag">Docker</span><span class="tag">CICD</span>
+            </div>
+          </a>
 
-      <a class="card" href="projects/pattern-mining.html" style="--hue:var(--teal)">
-        <div class="card__top">
-          <div class="card__badge">02</div>
-          <span class="card__year">2024</span>
-        </div>
-        <h3 class="card__title">增量資料庫可擦除樣式探勘 <span class="arrow">↗</span></h3>
-        <p class="card__desc">
-          實作 LINE 單次掃描增量演算法，協助零售商找出低利潤商品並捆綁高利潤商品，
-          新資料進來時不需要重掃整個資料庫。
-        </p>
-        <span class="card__metric">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
-          執行時間與記憶體優於樹狀基準演算法
-        </span>
-        <div class="tags">
-          <span class="tag">Java</span><span class="tag">Python</span>
-        </div>
-      </a>
+          <a class="card" href="projects/selection-system.html" style="--hue:var(--violet)">
+            <div class="card__top">
+              <div class="card__badge">02</div>
+              <span class="card__year">2026</span>
+            </div>
+            <h3 class="card__title">抽籤系統 <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              前金樂齡學習中心課程報名抽籤系統：設定名額、上傳報名檔案、確認抽籤到公佈結果，
+              也支援跳過抽籤全額錄取。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              使用者操作零提問
+            </span>
+            <div class="tags">
+              <span class="tag">Web</span><span class="tag">表單流程</span>
+            </div>
+          </a>
 
-      <a class="card" href="projects/cuda-parallel.html" style="--hue:var(--amber)">
-        <div class="card__top">
-          <div class="card__badge">03</div>
-          <span class="card__year">2024</span>
+          <a class="card" href="projects/campus-map.html" style="--hue:var(--rose)">
+            <div class="card__top">
+              <div class="card__badge">03</div>
+              <span class="card__year">2026</span>
+            </div>
+            <h3 class="card__title">校園地圖 <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              NTU poop：標示校園周邊廁所、無障礙廁所與哺乳室位置的互動地圖，
+              可依分類篩選、依距離排序。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              收錄 212 個地點
+            </span>
+            <div class="tags">
+              <span class="tag">Web</span><span class="tag">地圖 API</span>
+            </div>
+          </a>
+
+          <a class="card" href="projects/deadline-tracker.html" style="--hue:var(--green)">
+            <div class="card__top">
+              <div class="card__badge">04</div>
+              <span class="card__year">2026</span>
+            </div>
+            <h3 class="card__title">作業預警系統 <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              自動抓取 NTUCOOL 作業與考試截止日期，用 launchd 排程每小時檢查，
+              快到期時透過 Telegram Bot 主動推播提醒。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              7/3/1 天門檻式提醒
+            </span>
+            <div class="tags">
+              <span class="tag">自動抓取 API</span><span class="tag">排程</span><span class="tag">Telegram Bot</span>
+            </div>
+          </a>
         </div>
-        <h3 class="card__title">CUDA 高效能平行運算 <span class="arrow">↗</span></h3>
-        <p class="card__desc">
-          用 OpenMP 與 CUDA 平行化 2D 卷積運算，針對硬體架構設計記憶體存取策略，
-          最佳化 GPU 存取模式以縮短運算時間。
-        </p>
-        <span class="card__metric">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
-          GPU 記憶體存取模式優化
-        </span>
-        <div class="tags">
-          <span class="tag">C/C++</span><span class="tag">CUDA</span><span class="tag">OpenMP</span>
+      </div>
+
+      <div class="proj-category">
+        <p class="proj-category__label" style="--hue:var(--teal)">資料探勘</p>
+        <div class="proj-row">
+          <a class="card" href="projects/pattern-mining.html" style="--hue:var(--teal)">
+            <div class="card__top">
+              <div class="card__badge">02</div>
+              <span class="card__year">2024</span>
+            </div>
+            <h3 class="card__title">增量資料庫可擦除樣式探勘 <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              實作 LINE 單次掃描增量演算法，協助零售商找出低利潤商品並捆綁高利潤商品，
+              新資料進來時不需要重掃整個資料庫。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              執行時間與記憶體優於樹狀基準演算法
+            </span>
+            <div class="tags">
+              <span class="tag">Java</span><span class="tag">Python</span>
+            </div>
+          </a>
         </div>
-      </a>
+      </div>
+
+      <div class="proj-category">
+        <p class="proj-category__label" style="--hue:var(--amber)">CUDA</p>
+        <div class="proj-row">
+          <a class="card" href="projects/cuda-parallel.html" style="--hue:var(--amber)">
+            <div class="card__top">
+              <div class="card__badge">03</div>
+              <span class="card__year">2024</span>
+            </div>
+            <h3 class="card__title">CUDA 高效能平行運算 <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              用 OpenMP 與 CUDA 平行化 2D 卷積運算，針對硬體架構設計記憶體存取策略，
+              最佳化 GPU 存取模式以縮短運算時間。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              GPU 記憶體存取模式優化
+            </span>
+            <div class="tags">
+              <span class="tag">C/C++</span><span class="tag">CUDA</span><span class="tag">OpenMP</span>
+            </div>
+          </a>
+        </div>
+      </div>
 
     </div>
   </section>

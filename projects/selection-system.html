@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>抽籤系統 — Tzu-Huan Peng</title>
+<meta name="description" content="前金樂齡學習中心課程報名抽籤系統：設定名額、上傳報名檔案、確認抽籤、公佈結果的完整報名流程。">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbfbfd">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎟️</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="../index.html"><span class="brand__mark">H</span>Huan</a>
+    <a class="back" href="../index.html#projects">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5L4.5 8l5.5 4.5"/></svg>
+      回作品列表
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap hero" style="--hue:var(--violet)">
+    <p class="eyebrow">網頁系統 · Selected Work · 2026</p>
+    <h1>抽籤系統</h1>
+    <p class="hero__lede">
+      前金樂齡學習中心的<strong>課程報名抽籤系統</strong>：管理者設定年份、季度、課程與各類名額，
+      學員上傳報名檔案後系統自動抽籤，全程可追蹤設定名額 → 上傳檔案 → 確認抽籤 → 公佈結果四個步驟，
+      也支援「跳過抽籤（全額錄取）」的情境。
+    </p>
+
+    <div class="meta-row">
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M2.5 6h11M6 2.5v11"/></svg>
+        Web 系統
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+        前金樂齡學習中心
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.4"/></svg>
+        2026
+      </span>
+    </div>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="https://registeration-system-cj.vercel.app/" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 9.5L13.5 2.5M13.5 2.5H9M13.5 2.5V7M12 9v3.5a1 1 0 0 1-1 1H3.5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1H7"/></svg>
+        瀏覽網站
+      </a>
+      <a class="btn btn--ghost" href="https://github.com/huan131513/wp_final" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        在 GitHub 查看原始碼
+      </a>
+    </div>
+
+    <div class="cover">
+      <img src="assets/selection-system-shot.jpg" alt="前金樂齡學習中心課程報名抽籤系統畫面：頂部有設定名額、上傳檔案、確認抽籤、抽籤結果四個步驟指示，目前停在第一步「設定名額」，表單欄位包含選擇年份、選擇季度（春季/秋季）、課程名稱、總錄取人數、志工優先名額與備取人數，並有「跳過抽籤（全額錄取）」與「下一步」按鈕。">
+    </div>
+  </div>
+
+  <div class="wrap content" style="--hue:var(--violet)">
+
+    <h2>要解決的問題</h2>
+    <div class="prose">
+      <p>
+        前金樂齡學習中心每季開放長者報名課程，熱門課程的報名人數常常超過名額，
+        過去只能用人工抽籤決定錄取名單，流程繁瑣又容易出錯。
+        這個系統把整個報名抽籤流程數位化：管理者設定名額與規則，
+        學員上傳報名資料，系統自動完成公平抽籤並公佈結果。
+      </p>
+    </div>
+
+    <h2>四步驟流程</h2>
+    <div class="prose">
+      <p>
+        介面用清楚的步驟條引導管理者：<strong>① 設定名額</strong>（選擇年份、季度、課程名稱，
+        並分別設定總錄取人數、志工優先名額、備取人數）→ <strong>② 上傳檔案</strong>
+        （匯入報名學員名單）→ <strong>③ 確認抽籤</strong>（核對名單與規則無誤後執行抽籤）→
+        <strong>④ 抽籤結果</strong>（公佈錄取與備取名單）。若某堂課報名人數本來就不到名額，
+        也可以直接<strong>「跳過抽籤（全額錄取）」</strong>，不用跑完整套流程。
+      </p>
+    </div>
+    <div class="tags">
+      <span class="tag">Web</span><span class="tag">表單流程設計</span><span class="tag">前端</span>
+    </div>
+
+    <div class="callout">
+      <p><strong>成果：</strong>把原本要人工核對、手動抽籤的流程改成線上系統，
+      委託的老師甚至沒有再回頭問過操作上的問題，就自己完成了新年度的抽籤——
+      這也是設計這個系統時最在意的一件事：<strong>好用到使用者完全不需要問設計者</strong>。</p>
+    </div>
+
+  </div>
+
+  <nav class="proj-nav wrap">
+    <a class="prev" href="cloud-native.html">
+      <span class="dir">↑ 上一個</span>
+      <span class="title">Cloud-Native 全端應用（GKE）</span>
+    </a>
+    <a class="next" href="campus-map.html">
+      <span class="dir">下一個 ↓</span>
+      <span class="title">校園地圖</span>
+    </a>
+  </nav>
+</main>
+
+<footer class="wrap">
+  <span>© <span id="year">2026</span> Huan（Peng Tzu-Huan）</span>
+  <a href="../index.html#projects">回作品列表</a>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>作業預警系統 — Tzu-Huan Peng</title>
+<meta name="description" content="NTUCOOL 截止提醒系統：自動抓取台大 Canvas LMS 的作業與考試截止日期，用 launchd 排程每小時檢查，透過 Telegram Bot 主動推播提醒，並附上即時進度的網頁面板。">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbfbfd">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⏰</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="../index.html"><span class="brand__mark">H</span>Huan</a>
+    <a class="back" href="../index.html#projects">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5L4.5 8l5.5 4.5"/></svg>
+      回作品列表
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap hero" style="--hue:var(--green)">
+    <p class="eyebrow">網頁系統 · Selected Work · 2026</p>
+    <h1>作業預警系統</h1>
+    <p class="hero__lede">
+      台大 NTUCOOL（Canvas LMS）常常把作業、考試截止日淹沒在一堆課程頁面裡。
+      這個工具<strong>自動抓取所有課程的作業與考試截止日期</strong>，用 <strong>launchd 排程</strong>
+      每小時檢查一次，快到期時透過 <strong>Telegram Bot 主動推播提醒</strong>，
+      另外還有一個可以手動觸發、即時看抓取進度的網頁面板。
+    </p>
+
+    <div class="meta-row">
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M2.5 6h11M6 2.5v11"/></svg>
+        Web 系統 / 自動化
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+        個人專案 · 本機常駐
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.4"/></svg>
+        2026
+      </span>
+    </div>
+
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="https://github.com/huan131513/ntucool-deadline-tracker" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 0 0 5.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        在 GitHub 查看原始碼
+      </a>
+    </div>
+
+    <!-- cover: architecture diagram -->
+    <div class="cover">
+      <svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="架構圖：main.py 用 Chrome session cookie 對 NTUCOOL 抓取作業與考試資料，寫入 Flask API；launchd 每小時排程呼叫 /api/notify 觸發門檻提醒，經 Telegram Bot 推播給使用者；同時 React 網頁面板可手動觸發 /api/refresh 並輪詢 /api/progress 顯示即時進度。">
+        <defs>
+          <linearGradient id="bgD" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#22a06b" stop-opacity=".08"/>
+            <stop offset="1" stop-color="#5b5bd6" stop-opacity=".08"/>
+          </linearGradient>
+        </defs>
+        <rect width="900" height="460" fill="url(#bgD)"/>
+
+        <!-- NTUCOOL -->
+        <rect x="30" y="150" width="150" height="80" rx="14" fill="#fff" stroke="#5b5bd6" stroke-width="1.8"/>
+        <text x="105" y="185" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="13" fill="#16161d">NTUCOOL</text>
+        <text x="105" y="202" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">Canvas LMS</text>
+        <text x="105" y="120" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#5b5bd6">Chrome session cookie</text>
+
+        <path d="M180 190h60" stroke="#5b5bd6" stroke-width="2" fill="none" marker-end="url(#arrE)"/>
+
+        <!-- main.py fetch engine -->
+        <rect x="250" y="150" width="180" height="80" rx="14" fill="#fff" stroke="#22a06b" stroke-width="2"/>
+        <text x="340" y="180" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="13" fill="#16161d">main.py</text>
+        <text x="340" y="198" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">抓取作業 / 考試 / 公告</text>
+        <text x="340" y="214" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">New Quizzes 判斷</text>
+
+        <path d="M430 190h50" stroke="#22a06b" stroke-width="2" fill="none" marker-end="url(#arrE2)"/>
+
+        <!-- Flask API -->
+        <rect x="500" y="140" width="170" height="100" rx="14" fill="#fff" stroke="#f2994a" stroke-width="1.8"/>
+        <text x="585" y="168" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="13" fill="#16161d">Flask API</text>
+        <text x="585" y="186" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">/api/refresh</text>
+        <text x="585" y="202" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">/api/notify</text>
+        <text x="585" y="218" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">/api/progress</text>
+
+        <!-- Telegram -->
+        <path d="M670 165h60" stroke="#00b3ae" stroke-width="2" fill="none" marker-end="url(#arrE3)"/>
+        <rect x="740" y="120" width="140" height="70" rx="14" fill="#fff" stroke="#00b3ae" stroke-width="1.8"/>
+        <text x="810" y="150" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5" fill="#16161d">Telegram Bot</text>
+        <text x="810" y="167" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">主動推播提醒</text>
+
+        <!-- React dashboard -->
+        <path d="M670 215h60" stroke="#ef5da8" stroke-width="2" fill="none" marker-end="url(#arrE4)"/>
+        <rect x="740" y="215" width="140" height="70" rx="14" fill="#fff" stroke="#ef5da8" stroke-width="1.8"/>
+        <text x="810" y="245" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5" fill="#16161d">React 面板</text>
+        <text x="810" y="262" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">即時進度 + 月曆</text>
+
+        <!-- launchd scheduler -->
+        <rect x="380" y="320" width="220" height="90" rx="14" fill="#fff" stroke="#9b5de5" stroke-width="1.8" stroke-dasharray="5 4"/>
+        <text x="490" y="350" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="13" fill="#16161d">launchd 排程</text>
+        <text x="490" y="368" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">StartInterval = 3600</text>
+        <text x="490" y="384" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">curl -X POST /api/notify</text>
+
+        <path d="M490 320v-70" stroke="#9b5de5" stroke-width="2" fill="none" marker-end="url(#arrE5)"/>
+
+        <defs>
+          <marker id="arrE" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#5b5bd6"/></marker>
+          <marker id="arrE2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#22a06b"/></marker>
+          <marker id="arrE3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#00b3ae"/></marker>
+          <marker id="arrE4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#ef5da8"/></marker>
+          <marker id="arrE5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#9b5de5"/></marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <div class="wrap content" style="--hue:var(--green)">
+
+    <h2>要解決的問題</h2>
+    <div class="prose">
+      <p>
+        台大 NTUCOOL 上每門課的作業、考試截止日都散落在各自的課程頁面，
+        沒有一個地方能一次看完所有課程接下來的死線。<strong>更麻煩的是 NTUCOOL 這個 Canvas
+        站台不支援學生自行產生個人 API Token</strong>（設定頁沒有「已核准的整合」區塊），
+        一般常見的「拿 token 打 API」做法在這裡直接行不通。
+      </p>
+    </div>
+
+    <h2>認證方式：讀本機 Chrome 的登入 session</h2>
+    <div class="prose">
+      <p>
+        既然沒有 token，這個工具改用<strong>讀取本機 Chrome 目前登入 NTUCOOL 的 session cookie</strong>
+        （靠 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">browser_cookie3</code>
+        套件），不存密碼、不用手動複製貼上，也不必自動化登入流程去冒存密碼的風險。
+        代價是<strong>整個系統只能在使用者本機執行</strong>——雲端服務碰不到本機瀏覽器的資料，
+        所以這是刻意選擇的架構限制，不是技術債。中間也比較過爬蟲、Token、手動複製 cookie、
+        Bookmarklet、純前端讀 cookie 等將近十種方案，最後認證方式的取捨過程完整寫進專案的
+        README，作為之後回頭檢視決策的紀錄。
+      </p>
+    </div>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">Flask</span><span class="tag">React (Vite)</span>
+      <span class="tag">browser_cookie3</span><span class="tag">Telegram Bot API</span><span class="tag">launchd</span>
+    </div>
+
+    <h2>自動抓取 API</h2>
+    <div class="prose">
+      <p>
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">main.py</code>
+        用已認證的 session 打 Canvas 的作業 API，抓出所有課程<strong>即將到期的作業</strong>；
+        考試的部分比較特別——NTUCOOL 的舊版 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">/quizzes</code>
+        API 會回 404，所以改成<strong>從作業 API 回傳的 <code style="font-family:var(--font-mono);font-size:.85em">is_quiz_assignment</code>
+        欄位反推出 New Quizzes</strong>，再搭配 Calendar Events 與公告關鍵字掃描（低信度，只做提示、不觸發正式提醒）
+        補齊考試資訊。
+      </p>
+    </div>
+
+    <h2>排程：launchd 每小時檢查</h2>
+    <div class="prose">
+      <p>
+        本機常駐兩個 <strong>launchd</strong> 服務：一個是 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">RunAtLoad + KeepAlive</code>
+        跑 Flask 常駐服務，另一個是 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">StartInterval=3600</code>
+        每小時打一次 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">curl -X POST /api/notify</code>。
+        故意讓排程<strong>打 API 而不是直接重跑一份 CLI 邏輯</strong>，這樣 CLI、排程、網頁按鈕三條觸發路徑
+        永遠共用同一套抓取與判斷邏輯，不會出現「網頁上看到的」跟「排程實際送出的」兜不起來的情況。
+        提醒本身是<strong>門檻式</strong>的（截止前 7 / 3 / 1 天各推播一次），用
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">state.json</code>
+        記錄哪些提醒已經發過，避免同一個門檻重複轟炸。
+      </p>
+    </div>
+
+    <h2>Telegram Bot 通知</h2>
+    <div class="prose">
+      <p>
+        提醒最終都是透過自架的 <strong>Telegram Bot</strong> 推播給使用者，分成兩種模式：
+        排程觸發的<strong>門檻式提醒</strong>（快到期才推播），以及網頁面板手動按鈕觸發的
+        <strong>「不管門檻，直接列出所有未完成作業」摘要</strong>——想隨時確認目前戰況時不用等排程，
+        按一下就能收到完整清單。
+      </p>
+    </div>
+
+    <h2>網頁面板</h2>
+    <div class="prose">
+      <p>
+        除了背景排程，還做了一個 <strong>React + Flask</strong> 的輕量面板：手動觸發抓取、
+        <strong>即時輪詢顯示抓取進度</strong>（哪一步在跑、哪一步完成），作業/考試表格整列可點擊
+        直接跳轉回 NTUCOOL 對應頁面，右側搭配一個標示到期日的迷你月曆。
+        前後端共用同一套 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">progress_start / progress_step / progress_done</code>
+        進度追蹤器，不管是排程還是手動按鈕觸發抓取，網頁上看到的都是同一份即時狀態。
+      </p>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat__num">每小時</div>
+        <div class="stat__label">launchd 排程檢查一次截止日期</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">7 / 3 / 1</div>
+        <div class="stat__label">天門檻式 Telegram 提醒，state.json 防重複</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">1 套邏輯</div>
+        <div class="stat__label">CLI、排程、網頁按鈕共用同一套抓取與通知函式</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>學到的事：</strong>有時候最合理的架構不是「把什麼都搬上雲端」，而是誠實面對限制——
+      NTUCOOL 不給 API Token，就沒有一個雲端服務能安全、穩定地做到這件事。
+      把系統設計成本機常駐、用 launchd 排程，反而比硬要雲端化更簡單、更少地方會壞掉。</p>
+    </div>
+
+  </div>
+
+  <nav class="proj-nav wrap">
+    <a class="prev" href="campus-map.html">
+      <span class="dir">↑ 上一個</span>
+      <span class="title">校園地圖</span>
+    </a>
+    <a class="next" href="pattern-mining.html">
+      <span class="dir">下一個 ↓</span>
+      <span class="title">增量資料庫可擦除樣式探勘</span>
+    </a>
+  </nav>
+</main>
+
+<footer class="wrap">
+  <span>© <span id="year">2026</span> Huan（Peng Tzu-Huan）</span>
+  <a href="../index.html#projects">回作品列表</a>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
