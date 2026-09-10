@@ -63,8 +63,43 @@
       </a>
     </div>
 
-    <!-- cover: architecture diagram -->
+    <!-- cover: real dashboard screenshot -->
     <div class="cover">
+      <img src="assets/deadline-tracker-shot.jpg" alt="NTUCOOL 作業截止通知網站畫面：頂部顯示上次更新時間與「重新整理」「發送 Telegram 通知」按鈕，下方是抓取進度清單（檢查登入憑證、連接 Canvas 官方 API、抓取作業/考試資料、掃描公告關鍵字、整理資料，全部已完成）與 Canvas 連線正常狀態，右側是本月迷你月曆並標示到期日，最下方是作業列表，列出 HW1（電腦視覺 Computer Vision）的截止時間與剩餘天數。">
+    </div>
+  </div>
+
+  <div class="wrap content" style="--hue:var(--green)">
+
+    <h2>要解決的問題</h2>
+    <div class="prose">
+      <p>
+        台大 NTUCOOL 上每門課的作業、考試截止日都散落在各自的課程頁面，
+        沒有一個地方能一次看完所有課程接下來的死線。<strong>更麻煩的是 NTUCOOL 這個 Canvas
+        站台不支援學生自行產生個人 API Token</strong>（設定頁沒有「已核准的整合」區塊），
+        一般常見的「拿 token 打 API」做法在這裡直接行不通。
+      </p>
+    </div>
+
+    <h2>認證方式：讀本機 Chrome 的登入 session</h2>
+    <div class="prose">
+      <p>
+        既然沒有 token，這個工具改用<strong>讀取本機 Chrome 目前登入 NTUCOOL 的 session cookie</strong>
+        （靠 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">browser_cookie3</code>
+        套件），不存密碼、不用手動複製貼上，也不必自動化登入流程去冒存密碼的風險。
+        代價是<strong>整個系統只能在使用者本機執行</strong>——雲端服務碰不到本機瀏覽器的資料，
+        所以這是刻意選擇的架構限制，不是技術債。中間也比較過爬蟲、Token、手動複製 cookie、
+        Bookmarklet、純前端讀 cookie 等將近十種方案，最後認證方式的取捨過程完整寫進專案的
+        README，作為之後回頭檢視決策的紀錄。
+      </p>
+    </div>
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">Flask</span><span class="tag">React (Vite)</span>
+      <span class="tag">browser_cookie3</span><span class="tag">Telegram Bot API</span><span class="tag">launchd</span>
+    </div>
+
+    <h2>系統架構</h2>
+    <div class="figure">
       <svg viewBox="0 0 900 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="架構圖：main.py 用 Chrome session cookie 對 NTUCOOL 抓取作業與考試資料，寫入 Flask API；launchd 每小時排程呼叫 /api/notify 觸發門檻提醒，經 Telegram Bot 推播給使用者；同時 React 網頁面板可手動觸發 /api/refresh 並輪詢 /api/progress 顯示即時進度。">
         <defs>
           <linearGradient id="bgD" x1="0" y1="0" x2="1" y2="1">
@@ -125,36 +160,7 @@
           <marker id="arrE5" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#9b5de5"/></marker>
         </defs>
       </svg>
-    </div>
-  </div>
-
-  <div class="wrap content" style="--hue:var(--green)">
-
-    <h2>要解決的問題</h2>
-    <div class="prose">
-      <p>
-        台大 NTUCOOL 上每門課的作業、考試截止日都散落在各自的課程頁面，
-        沒有一個地方能一次看完所有課程接下來的死線。<strong>更麻煩的是 NTUCOOL 這個 Canvas
-        站台不支援學生自行產生個人 API Token</strong>（設定頁沒有「已核准的整合」區塊），
-        一般常見的「拿 token 打 API」做法在這裡直接行不通。
-      </p>
-    </div>
-
-    <h2>認證方式：讀本機 Chrome 的登入 session</h2>
-    <div class="prose">
-      <p>
-        既然沒有 token，這個工具改用<strong>讀取本機 Chrome 目前登入 NTUCOOL 的 session cookie</strong>
-        （靠 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">browser_cookie3</code>
-        套件），不存密碼、不用手動複製貼上，也不必自動化登入流程去冒存密碼的風險。
-        代價是<strong>整個系統只能在使用者本機執行</strong>——雲端服務碰不到本機瀏覽器的資料，
-        所以這是刻意選擇的架構限制，不是技術債。中間也比較過爬蟲、Token、手動複製 cookie、
-        Bookmarklet、純前端讀 cookie 等將近十種方案，最後認證方式的取捨過程完整寫進專案的
-        README，作為之後回頭檢視決策的紀錄。
-      </p>
-    </div>
-    <div class="tags">
-      <span class="tag">Python</span><span class="tag">Flask</span><span class="tag">React (Vite)</span>
-      <span class="tag">browser_cookie3</span><span class="tag">Telegram Bot API</span><span class="tag">launchd</span>
+      <figcaption>NTUCOOL → main.py（Chrome session cookie）→ Flask API → Telegram Bot / React 面板；launchd 每小時排程呼叫 /api/notify</figcaption>
     </div>
 
     <h2>自動抓取 API</h2>

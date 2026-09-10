@@ -364,14 +364,17 @@ section:last-of-type{padding-bottom:var(--section)}
    7. About
    ════════════════════════════════════════════════════════════ */
 .about{display:grid; gap:clamp(28px, 4vw, 52px); align-items:start}
-@media (min-width:900px){ .about{grid-template-columns:300px 1fr} }
+@media (min-width:900px){ .about{grid-template-columns:210px 1fr} }
 
 .avatar-photo{
   position:relative; border-radius:var(--radius-lg); overflow:hidden;
   background:var(--bg-elevated); border:1px solid var(--border);
   box-shadow:var(--shadow-md);
   aspect-ratio:3/4;
+  width:70%;
+  margin-inline:auto;
 }
+@media (min-width:900px){ .avatar-photo{width:100%; margin-inline:0} }
 .avatar-photo img{
   width:100%; height:100%; object-fit:cover; object-position:50% 22%;
   display:block;
@@ -793,15 +796,15 @@ footer a:hover{color:var(--indigo)}
 
         <div class="prose">
           <p>
-            現為<span class="hl">國立臺灣大學資訊工程學系研究所</span> imLab 研究生，大學就讀國立中山大學資訊工程學系。
+            現為<span class="hl">國立臺灣大學資訊工程學系研究所</span> imLab 研究生。
             主要技術方向為雲原生基礎設施，包含容器化、Kubernetes 部署與維運、CI/CD 流程設計，
             並搭配 Prometheus/Grafana 建立可觀測性。相關實作包含將應用部署到 GKE Autopilot、
             用 GitHub Actions 建立涵蓋測試、多階段建置與部署的 CI/CD pipeline，
-            以及透過 HPA 負載測試與故障演練驗證系統的可靠性。研究所期間修習由 TSMC IT 與臺大合開的
-            雲原生應用程式開發課程，內容涵蓋 12-Factor App、User Story、Docker、CI/CD 與 Kubernetes 實作。
+            以及透過 HPA 負載測試與故障演練驗證系統的可靠性。
           </p>
           <p>
-            另完成過機器學習、電腦視覺與資料探勘領域的專案。在 <strong>TSMC IT CareerHack</strong> 中
+            研究所期間修習由 TSMC IT 與臺大合開的<span class="hl">雲原生應用程式開發課程</span>，內容涵蓋 12-Factor App、User Story、Docker、CI/CD 與 Kubernetes 實作。另完成過機器學習、電腦視覺與資料探勘領域的專案。
+            在<span class="hl">TSMC IT CareerHack</span> 中
             訓練光源估計模型，Public leaderboard 準確率達 98.3%，Private test set 為 96.7%。
           </p>
         </div>
@@ -823,7 +826,7 @@ footer a:hover{color:var(--indigo)}
           <article class="job">
             <div class="job__meta">2025.08 — 2027.06（在學中） <span class="chip">學位</span></div>
             <h3 class="job__role">國立台灣大學 資訊工程研究所</h3>
-            <h1 class="job__role">M.S. in Computer Science & Information Engineering</h1>
+            <h4 class="job__role">M.S. in Computer Science & Information Engineering</h4>
             <p class="job__org">National Taiwan University（NTU）· imLab</p>
             <p class="job__desc">
               研究方向為 XR 顯示技術，主導 OpVerse——一個應用於外科手術的 Metaverse 平台。
@@ -844,7 +847,7 @@ footer a:hover{color:var(--indigo)}
           <article class="job">
             <div class="job__meta">2021.09 — 2025.06 <span class="chip">學位</span></div>
             <h3 class="job__role">國立中山大學 資訊工程學系</h3>
-            <h3 class="job__role">B.S. in Computer Science & Engineering</h3>
+            <h4 class="job__role">B.S. in Computer Science & Engineering</h4>
             <p class="job__org">National Sun Yat-sen University（NSYSU）</p>
             <p class="job__desc">
               主修計算機科學與工程，修習 Database System、Data Structure & Algorithm 等課程。
@@ -873,7 +876,7 @@ footer a:hover{color:var(--indigo)}
           <article class="job">
             <div class="job__meta">2026.02 — 2026.06 <span class="chip">課程</span></div>
             <h3 class="job__role">雲原生應用程式開發</h3>
-            <h3 class="job__role">Cloud Native Application Development</h3>
+            <h4 class="job__role">Cloud Native Application Development</h4>
 
             <p class="job__org">TSMC IT × National Taiwan University</p>
             <p class="job__desc">
@@ -885,7 +888,7 @@ footer a:hover{color:var(--indigo)}
           <article class="job">
             <div class="job__meta">2026.02 <span class="chip">競賽</span></div>
             <h3 class="job__role">TSMC IT CareerHack - </h3>
-            <h3 class="job__role">AI-Driven Intelligent Collaboration</h3>
+            <h4 class="job__role">AI-Driven Intelligent Collaboration</h4>
 
             <p class="job__org">TSMC</p>
             <p class="job__desc">
