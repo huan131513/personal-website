@@ -511,6 +511,20 @@ section:last-of-type{padding-bottom:var(--section)}
 /* ════════════════════════════════════════════════════════════
    10. Experience timeline
    ════════════════════════════════════════════════════════════ */
+.exp-grid{display:grid; gap:clamp(36px, 5vw, 56px)}
+@media (min-width:760px){ .exp-grid{grid-template-columns:1fr 1fr} }
+.exp-col__title{
+  font-size:19px; font-weight:700; letter-spacing:-0.02em; color:var(--text);
+  margin-bottom:22px;
+}
+.job__role a{
+  text-decoration:none; color:inherit;
+  background:linear-gradient(transparent 88%, currentColor 0);
+  background-size:0% 100%; background-repeat:no-repeat;
+  transition:background-size .3s ease;
+}
+.job__role a:hover{background-size:100% 100%}
+.job__role .ext{font-size:.7em; vertical-align:0.15em; margin-left:3px; opacity:.6}
 .timeline{position:relative; padding-left:clamp(26px, 4vw, 34px)}
 .timeline::before{
   content:""; position:absolute; left:5px; top:6px; bottom:6px; width:2px;
@@ -798,47 +812,75 @@ footer a:hover{color:var(--indigo)}
     <p class="eyebrow" style="--hue:var(--teal)">Experience</p>
     <h2 class="h2">經歷</h2>
 
-    <div class="timeline" data-stagger>
+    <div class="exp-grid">
 
-      <article class="job">
-        <div class="job__meta">2026.02 <span class="chip">競賽</span></div>
-        <h3 class="job__role">TSMC IT CareerHack — AI-Driven Intelligent Collaboration</h3>
-        <p class="job__org">TSMC</p>
-        <p class="job__desc">
-          與 AI agent 協作生成陰影與鏡面反射遮罩作為訓練資料，訓練光源估計模型；
-          Public leaderboard 達 98.3% 準確率，Private test set 96.7%。
-          用 Python 與深度學習框架設計資料流程與訓練工作流。
-        </p>
-      </article>
+      <div class="exp-col">
+        <p class="exp-col__title">學歷/工作經驗</p>
+        <div class="timeline" data-stagger>
 
-      <article class="job">
-        <div class="job__meta">2025.08 — 2027.06（在學中） <span class="chip">學位</span></div>
-        <h3 class="job__role">M.S. in Computer Science & Information Engineering</h3>
-        <p class="job__org">National Taiwan University（NTU）· imLab</p>
-        <p class="job__desc">
-          研究方向為 XR 顯示技術，主導 OpVerse——一個應用於外科手術的 Metaverse 平台。
-          修課涵蓋 Cloud Native Development、Web Programming、High-Performance Big Data & AI Systems。
-        </p>
-      </article>
+          <article class="job">
+            <div class="job__meta">2025.08 — 2027.06（在學中） <span class="chip">學位</span></div>
+            <h3 class="job__role">M.S. in Computer Science & Information Engineering</h3>
+            <p class="job__org">National Taiwan University（NTU）· imLab</p>
+            <p class="job__desc">
+              研究方向為 XR 顯示技術，主導 OpVerse——一個應用於外科手術的 Metaverse 平台。
+              修課涵蓋 Cloud Native Development、Web Programming、High-Performance Big Data & AI Systems。
+            </p>
+          </article>
 
-      <article class="job">
-        <div class="job__meta">2023.11 — 2025.06 <span class="chip">兼職</span></div>
-        <h3 class="job__role">Website Administrator</h3>
-        <p class="job__org">College of Medicine Core Facility Laboratory, NSYSU</p>
-        <p class="job__desc">
-          1.5 年管理與維護實驗室網站，處理更新、修 bug 與營運支援；
-          並把網站從 PHP 5.6 遷移到現代化版本，提升效能與相容性。
-        </p>
-      </article>
+          <article class="job">
+            <div class="job__meta">2023.11 — 2025.06 <span class="chip">兼職</span></div>
+            <h3 class="job__role">Website Administrator</h3>
+            <p class="job__org">College of Medicine Core Facility Laboratory, NSYSU</p>
+            <p class="job__desc">
+              1.5 年管理與維護實驗室網站，處理更新、修 bug 與營運支援；
+              並把網站從 PHP 5.6 遷移到現代化版本，提升效能與相容性。
+            </p>
+          </article>
 
-      <article class="job">
-        <div class="job__meta">2021.09 — 2025.06 <span class="chip">學位</span></div>
-        <h3 class="job__role">B.S. in Computer Science & Engineering</h3>
-        <p class="job__org">National Sun Yat-sen University（NSYSU）</p>
-        <p class="job__desc">
-          主修計算機科學與工程，修習 Database System、Data Structure & Algorithm 等課程。
-        </p>
-      </article>
+          <article class="job">
+            <div class="job__meta">2021.09 — 2025.06 <span class="chip">學位</span></div>
+            <h3 class="job__role">B.S. in Computer Science & Engineering</h3>
+            <p class="job__org">National Sun Yat-sen University（NSYSU）</p>
+            <p class="job__desc">
+              主修計算機科學與工程，修習 Database System、Data Structure & Algorithm 等課程。
+            </p>
+          </article>
+
+        </div>
+      </div>
+
+      <div class="exp-col">
+        <p class="exp-col__title">活動</p>
+        <div class="timeline" data-stagger>
+          <article class="job">
+            <div class="job__meta">2026.09 <span class="chip">研討會</span></div>
+            <h3 class="job__role">
+              <a href="https://k8s.ithome.com.tw/2026" target="_blank" rel="noopener">
+                KubeSummit 2026<span class="ext">↗</span>
+              </a>
+            </h3>
+            <p class="job__org">iThome</p>
+            <p class="job__desc">
+              參加 iThome 主辦的 Kubernetes 年度技術大會，關注雲原生生態系的最新趨勢
+              與業界實務案例分享。
+            </p>
+          </article>
+          <article class="job">
+            <div class="job__meta">2026.02 <span class="chip">競賽</span></div>
+            <h3 class="job__role">TSMC IT CareerHack — AI-Driven Intelligent Collaboration</h3>
+            <p class="job__org">TSMC</p>
+            <p class="job__desc">
+              與 AI agent 協作生成陰影與鏡面反射遮罩作為訓練資料，訓練光源估計模型；
+              Public leaderboard 達 98.3% 準確率，Private test set 96.7%。
+              用 Python 與深度學習框架設計資料流程與訓練工作流。
+            </p>
+          </article>
+
+          
+
+        </div>
+      </div>
 
     </div>
   </section>
@@ -872,47 +914,9 @@ footer a:hover{color:var(--indigo)}
             </div>
           </a>
 
-          <a class="card" href="projects/selection-system.html" style="--hue:var(--violet)">
-            <div class="card__top">
-              <div class="card__badge">02</div>
-              <span class="card__year">2026</span>
-            </div>
-            <h3 class="card__title">抽籤系統 <span class="arrow">↗</span></h3>
-            <p class="card__desc">
-              前金樂齡學習中心課程報名抽籤系統：設定名額、上傳報名檔案、確認抽籤到公佈結果，
-              也支援跳過抽籤全額錄取。
-            </p>
-            <span class="card__metric">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
-              使用者操作零提問
-            </span>
-            <div class="tags">
-              <span class="tag">Web</span><span class="tag">表單流程</span>
-            </div>
-          </a>
-
-          <a class="card" href="projects/campus-map.html" style="--hue:var(--rose)">
-            <div class="card__top">
-              <div class="card__badge">03</div>
-              <span class="card__year">2026</span>
-            </div>
-            <h3 class="card__title">校園地圖 <span class="arrow">↗</span></h3>
-            <p class="card__desc">
-              NTU poop：標示校園周邊廁所、無障礙廁所與哺乳室位置的互動地圖，
-              可依分類篩選、依距離排序。
-            </p>
-            <span class="card__metric">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
-              收錄 212 個地點
-            </span>
-            <div class="tags">
-              <span class="tag">Web</span><span class="tag">地圖 API</span>
-            </div>
-          </a>
-
           <a class="card" href="projects/deadline-tracker.html" style="--hue:var(--green)">
             <div class="card__top">
-              <div class="card__badge">04</div>
+              <div class="card__badge">02</div>
               <span class="card__year">2026</span>
             </div>
             <h3 class="card__title">作業預警系統 <span class="arrow">↗</span></h3>
@@ -926,6 +930,44 @@ footer a:hover{color:var(--indigo)}
             </span>
             <div class="tags">
               <span class="tag">自動抓取 API</span><span class="tag">排程</span><span class="tag">Telegram Bot</span>
+            </div>
+          </a>
+
+          <a class="card" href="projects/selection-system.html" style="--hue:var(--violet)">
+            <div class="card__top">
+              <div class="card__badge">03</div>
+              <span class="card__year">2026</span>
+            </div>
+            <h3 class="card__title">抽籤系統 <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              前金樂齡學習中心課程報名抽籤系統：設定名額、上傳報名檔案、確認抽籤到公佈結果，
+              也支援跳過抽籤全額錄取。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              User Story，簡化流程
+            </span>
+            <div class="tags">
+              <span class="tag">前端設計</span><span class="tag">後端邏輯</span><span class="tag">錯誤預防</span>
+            </div>
+          </a>
+
+          <a class="card" href="projects/campus-map.html" style="--hue:var(--rose)">
+            <div class="card__top">
+              <div class="card__badge">04</div>
+              <span class="card__year">2026</span>
+            </div>
+            <h3 class="card__title">校園地圖 <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              NTU poop：標示校園周邊廁所、無障礙廁所與哺乳室位置的互動地圖，
+              可依分類篩選、依距離排序。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              收錄 212 個地點
+            </span>
+            <div class="tags">
+              <span class="tag">Web</span><span class="tag">地圖 API</span>
             </div>
           </a>
         </div>
