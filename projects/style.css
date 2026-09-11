@@ -213,6 +213,17 @@ ul{margin:0; padding:0; list-style:none}
 .callout p + p{margin-top:8px}
 .callout strong{color:var(--text)}
 
+/* ── quote banner: bold, centered callout for a single line ─ */
+.quote-banner{
+  margin-top:clamp(22px, 4vw, 32px);
+  padding-inline:clamp(20px, 4vw, 36px);
+  text-align:center;
+}
+.quote-banner p{
+  font-size:clamp(16px, 2vw, 19px); font-weight:700; letter-spacing:-0.015em;
+  color:var(--text); line-height:1.5;
+}
+
 /* ── project nav (prev/next) ─────────────────────────────── */
 .proj-nav{
   display:grid; gap:14px; grid-template-columns:1fr;
