@@ -36,8 +36,7 @@
     <p class="hero__lede">
       台大 NTUCOOL（Canvas LMS）常常把作業、考試截止日淹沒在一堆課程頁面裡。
       這個工具<strong>自動抓取所有課程的作業與考試截止日期</strong>，用 <strong>launchd 排程</strong>
-      每小時檢查一次，快到期時透過 <strong>Telegram Bot 主動推播提醒</strong>，
-      另外還有一個可以手動觸發、即時看抓取進度的網頁面板。
+      每小時檢查一次，快到期時透過 <strong>Telegram Bot 主動發送通知到手機上</strong>，
     </p>
 
     <div class="meta-row">
@@ -74,7 +73,7 @@
     <div class="prose">
       <p>
         台大 NTUCOOL 上每門課的作業、考試截止日都散落在各自的課程頁面，
-        沒有一個地方能一次看完所有課程接下來的死線。<strong>更麻煩的是 NTUCOOL 這個 Canvas
+        沒有一個地方能一次看完所有作業的期限。<strong>更麻煩的是 NTUCOOL 這個 Canvas
         站台不支援學生自行產生個人 API Token</strong>（設定頁沒有「已核准的整合」區塊），
         一般常見的「拿 token 打 API」做法在這裡直接行不通。
       </p>
@@ -225,9 +224,9 @@
     </div>
 
     <div class="callout">
-      <p><strong>學到的事：</strong>有時候最合理的架構不是「把什麼都搬上雲端」，而是誠實面對限制——
-      NTUCOOL 不給 API Token，就沒有一個雲端服務能安全、穩定地做到這件事。
-      把系統設計成本機常駐、用 launchd 排程，反而比硬要雲端化更簡單、更少地方會壞掉。</p>
+      <p><strong>學到的事：</strong>有時候最合理的架構不是「把什麼都搬上雲端」，而是面對限制且尋找替代方案
+      NTUCOOL無法提供API Token，就沒有一個雲端服務能安全、穩定地做到這件事。
+      我轉而把系統設計成本機常駐、用launchd排程，一樣能做到全自動抓取資料，且不需要處存帳號密碼，好用又安全。</p>
     </div>
 
   </div>
