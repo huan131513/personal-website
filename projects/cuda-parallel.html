@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CUDA 高效能平行運算 — Tzu-Huan Peng</title>
-<meta name="description" content="用 OpenMP 與 CUDA 平行化 2D 卷積運算，針對硬體架構設計記憶體存取策略，最佳化 GPU 存取模式以縮短運算時間。">
+<title>CUDA 矩陣共軛轉置 — Tzu-Huan Peng</title>
+<meta name="description" content="用 CUDA 實作 N×N 複數矩陣的共軛轉置，從 global memory 版本逐步優化到 shared memory 與 bank conflict 迴避，運算時間縮短 43%。">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#fbfbfd">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,12 +31,13 @@
 
 <main>
   <div class="wrap hero" style="--hue:var(--amber)">
-    <p class="eyebrow">03 · Selected Work · 2024</p>
-    <h1>CUDA 高效能平行運算</h1>
+    <p class="eyebrow">其他專案 · Selected Work · 2025</p>
+    <h1>CUDA 矩陣共軛轉置</h1>
     <p class="hero__lede">
-      2D 卷積運算是影像處理與深度學習的核心操作之一，但單執行緒實作在大尺寸影像上會非常慢。
-      這個專案用 <strong>OpenMP 做多核心 CPU 平行化、CUDA 做 GPU 平行化</strong>，
-      並針對硬體記憶體階層設計存取策略，實測比較不同平行化策略對運算時間的影響。
+      用 CUDA 實作 <strong>N×N 複數矩陣的共軛轉置（conjugate transpose）</strong>：
+      轉置座標，並把每個元素的虛部取負。從只用 <strong>global memory</strong> 的陽春版本開始，
+      逐步加上 <strong>shared memory</strong> 暫存與 <strong>bank conflict 迴避</strong>，
+      在 NVIDIA RTX 3060 Ti 上實測三個版本的效能差異。
     </p>
 
     <div class="meta-row">
@@ -46,79 +47,79 @@
       </span>
       <span class="meta-chip">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
-        課程專案
+        高效能巨量資料與人工智慧系統 · HW4
       </span>
       <span class="meta-chip">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.4"/></svg>
-        2024
+        2025
       </span>
     </div>
 
-
-    <!-- cover: GPU grid/block/thread + memory hierarchy -->
+    <!-- cover: conjugate transpose pipeline (tile → shared memory → blockIdx swap → padded to avoid bank conflict) -->
     <div class="cover">
-      <svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="示意圖：輸入影像被切分成多個 Block，每個 Block 內有多個 Thread 平行計算卷積輸出，並利用共享記憶體暫存重疊的鄰域資料以減少全域記憶體存取。">
+      <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="示意圖：輸入矩陣的 32x32 子矩陣先合併讀取進 shared memory tile，接著交換 blockIdx.x 與 blockIdx.y 計算輸出座標，讓寫回 global memory 時也是合併寫入；shared memory 陣列寬度多加一欄 padding，讓同一個 warp 存取同一行時分散到不同 bank，避免 bank conflict。">
         <defs>
-          <linearGradient id="bgC" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f2994a" stop-opacity=".1"/>
-            <stop offset="1" stop-color="#ef5da8" stop-opacity=".08"/>
+          <linearGradient id="bgCu" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f2994a" stop-opacity=".08"/>
+            <stop offset="1" stop-color="#5b5bd6" stop-opacity=".07"/>
           </linearGradient>
         </defs>
-        <rect width="900" height="400" fill="url(#bgC)"/>
+        <rect width="900" height="420" fill="url(#bgCu)"/>
 
-        <!-- input image grid -->
-        <text x="40" y="40" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#16161d">輸入影像（切成 Block）</text>
-        <g transform="translate(40,55)">
-          <rect width="260" height="260" fill="#fff" stroke="#d6d6e4" stroke-width="1.6"/>
-          <!-- grid lines -->
+        <!-- input matrix -->
+        <text x="40" y="38" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="#16161d">輸入矩陣（Global Memory）</text>
+        <g transform="translate(40,52)">
+          <rect width="180" height="180" fill="#fff" stroke="#d6d6e4" stroke-width="1.6"/>
           <g stroke="#e8e8f0" stroke-width="1">
-            <line x1="65" y1="0" x2="65" y2="260"/><line x1="130" y1="0" x2="130" y2="260"/><line x1="195" y1="0" x2="195" y2="260"/>
-            <line x1="0" y1="65" x2="260" y2="65"/><line x1="0" y1="130" x2="260" y2="130"/><line x1="0" y1="195" x2="260" y2="195"/>
-          </g>
-          <!-- highlighted block -->
-          <rect x="65" y="65" width="65" height="65" fill="#f2994a" opacity=".22" stroke="#f2994a" stroke-width="2"/>
-          <text x="97.5" y="102" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#b5651d">Block(1,1)</text>
-        </g>
-
-        <!-- arrow -->
-        <path d="M310 185h60" stroke="#f2994a" stroke-width="2.2" fill="none" marker-end="url(#arrC)"/>
-
-        <!-- block zoom: threads -->
-        <text x="400" y="40" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#16161d">Block 內的 Thread 平行運算</text>
-        <g transform="translate(400,55)">
-          <rect width="180" height="180" rx="10" fill="#fff" stroke="#f2994a" stroke-width="1.8"/>
-          <g stroke="#f3d9bd" stroke-width="1">
             <line x1="45" y1="0" x2="45" y2="180"/><line x1="90" y1="0" x2="90" y2="180"/><line x1="135" y1="0" x2="135" y2="180"/>
             <line x1="0" y1="45" x2="180" y2="45"/><line x1="0" y1="90" x2="180" y2="90"/><line x1="0" y1="135" x2="180" y2="135"/>
           </g>
-          <g fill="#f2994a">
-            <circle cx="22.5" cy="22.5" r="4"/><circle cx="67.5" cy="22.5" r="4"/><circle cx="112.5" cy="22.5" r="4"/><circle cx="157.5" cy="22.5" r="4"/>
-            <circle cx="22.5" cy="67.5" r="4"/><circle cx="67.5" cy="67.5" r="4"/><circle cx="112.5" cy="67.5" r="4"/><circle cx="157.5" cy="67.5" r="4"/>
-            <circle cx="22.5" cy="112.5" r="4"/><circle cx="67.5" cy="112.5" r="4"/><circle cx="112.5" cy="112.5" r="4"/><circle cx="157.5" cy="112.5" r="4"/>
-            <circle cx="22.5" cy="157.5" r="4"/><circle cx="67.5" cy="157.5" r="4"/><circle cx="112.5" cy="157.5" r="4"/><circle cx="157.5" cy="157.5" r="4"/>
+          <rect x="45" y="45" width="45" height="45" fill="#5b5bd6" opacity=".2" stroke="#5b5bd6" stroke-width="2"/>
+          <text x="67.5" y="72" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#4a4ab8">32×32</text>
+        </g>
+        <text x="130" y="252" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">合併讀取（threadIdx.x 連續）</text>
+
+        <path d="M232 140h50" stroke="#5b5bd6" stroke-width="2.2" fill="none" marker-end="url(#arrCu1)"/>
+
+        <!-- shared memory tile -->
+        <text x="300" y="38" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="#16161d">Shared Memory Tile</text>
+        <g transform="translate(300,52)">
+          <rect width="180" height="180" rx="8" fill="#fff" stroke="#22a06b" stroke-width="1.8"/>
+          <g stroke="#cdeee0" stroke-width="1">
+            <line x1="22.5" y1="0" x2="22.5" y2="180"/><line x1="45" y1="0" x2="45" y2="180"/><line x1="67.5" y1="0" x2="67.5" y2="180"/>
+            <line x1="90" y1="0" x2="90" y2="180"/><line x1="112.5" y1="0" x2="112.5" y2="180"/><line x1="135" y1="0" x2="135" y2="180"/><line x1="157.5" y1="0" x2="157.5" y2="180"/>
           </g>
+          <text x="90" y="95" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#178a5a">tile[y][x]</text>
         </g>
-        <text x="490" y="256" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#8b8ba3">每個點 = 一個 thread，同步執行卷積核運算</text>
+        <text x="390" y="252" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">__syncthreads()</text>
 
-        <!-- memory hierarchy -->
-        <text x="640" y="40" font-family="Inter, sans-serif" font-size="13" font-weight="700" fill="#16161d">記憶體階層</text>
-        <g font-family="JetBrains Mono, monospace" font-size="11">
-          <rect x="640" y="55" width="220" height="46" rx="10" fill="#fff" stroke="#22a06b" stroke-width="1.8"/>
-          <text x="750" y="83" text-anchor="middle" fill="#16161d" font-weight="700">Registers（每 thread）</text>
+        <path d="M492 140h50" stroke="#22a06b" stroke-width="2.2" fill="none" marker-end="url(#arrCu2)"/>
+        <text x="517" y="130" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">交換</text>
+        <text x="517" y="142" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">blockIdx</text>
 
-          <path d="M750 101v14" stroke="#8b8ba3" stroke-width="1.6" marker-end="url(#arrD)"/>
-          <rect x="640" y="115" width="220" height="46" rx="10" fill="#fff" stroke="#00b3ae" stroke-width="1.8"/>
-          <text x="750" y="143" text-anchor="middle" fill="#16161d" font-weight="700">Shared Memory（每 block）</text>
-
-          <path d="M750 161v14" stroke="#8b8ba3" stroke-width="1.6" marker-end="url(#arrD)"/>
-          <rect x="640" y="175" width="220" height="46" rx="10" fill="#fff" stroke="#ef5da8" stroke-width="1.8"/>
-          <text x="750" y="203" text-anchor="middle" fill="#16161d" font-weight="700">Global Memory（整個 GPU）</text>
+        <!-- output matrix -->
+        <text x="560" y="38" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="#16161d">輸出矩陣（轉置＋共軛）</text>
+        <g transform="translate(560,52)">
+          <rect width="180" height="180" fill="#fff" stroke="#d6d6e4" stroke-width="1.6"/>
+          <g stroke="#e8e8f0" stroke-width="1">
+            <line x1="45" y1="0" x2="45" y2="180"/><line x1="90" y1="0" x2="90" y2="180"/><line x1="135" y1="0" x2="135" y2="180"/>
+            <line x1="0" y1="45" x2="180" y2="45"/><line x1="0" y1="90" x2="180" y2="90"/><line x1="0" y1="135" x2="180" y2="135"/>
+          </g>
+          <rect x="90" y="0" width="45" height="45" fill="#ef5da8" opacity=".2" stroke="#ef5da8" stroke-width="2"/>
+          <text x="112.5" y="27" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#c23f80">合併寫入</text>
         </g>
-        <text x="750" y="240" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">越靠上層越快、越小；設計上盡量把重複存取搬到 shared memory</text>
+
+        <!-- bank conflict avoidance strip -->
+        <rect x="40" y="300" width="700" height="90" rx="12" fill="#fff" stroke="#f2994a" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <text x="60" y="326" font-family="Inter, sans-serif" font-size="12.5" font-weight="700" fill="#16161d">Bank Conflict 迴避：tile[TILE_DIM][TILE_DIM + 1]</text>
+        <g font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">
+          <text x="60" y="348">無 padding：同一行 32 個元素落在同一 bank → 32 個 threads 排隊序列化</text>
+          <text x="60" y="368">多加一欄 padding：每一行整體錯開一個 bank → 同一 warp 分散到 32 個不同 bank，平行存取</text>
+        </g>
 
         <defs>
-          <marker id="arrC" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#f2994a"/></marker>
-          <marker id="arrD" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0l5 3-5 3z" fill="#8b8ba3"/></marker>
+          <marker id="arrCu1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#5b5bd6"/></marker>
+          <marker id="arrCu2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#22a06b"/></marker>
         </defs>
       </svg>
     </div>
@@ -129,94 +130,137 @@
     <h2>要解決的問題</h2>
     <div class="prose">
       <p>
-        2D 卷積（convolution）是影像濾波、特徵萃取、CNN 前向傳播的基礎運算：
-        每個輸出像素都要對輸入影像的一小塊鄰域跟卷積核做內積。
-        單執行緒實作的時間複雜度隨影像尺寸與卷積核大小快速增長，
-        在大尺寸輸入上會變成明顯的效能瓶頸——但這個運算本質上是<strong>高度平行</strong>的：
-        每個輸出像素的計算彼此獨立，非常適合拿來練平行運算的硬功夫。
+        這是「高效能巨量資料與人工智慧系統」課程的作業：用 CUDA 實作 N×N 複數矩陣的
+        <strong>共軛轉置</strong>——輸出矩陣的 (x, y) 元素等於輸入矩陣 (y, x) 元素的複數共軛
+        （實部不變、虛部取負）。作業要求交出<strong>三個逐步優化的版本</strong>：只用 global memory、
+        加上 shared memory、再加上 bank conflict 迴避，並在報告中分析每一步為什麼變快。
+        評分標準會用 Nsight Compute 檢查記憶體合併讀取（coalescing）與 bank conflict 指標，
+        不是只看跑得快不快。
       </p>
     </div>
 
-    <h2>兩種平行化策略</h2>
+    <h2>版本一：只用 Global Memory</h2>
     <div class="prose">
       <p>
-        <strong>OpenMP（CPU 多核心）：</strong>用 <code style="font-family:var(--font-mono);font-size:.92em;background:var(--bg-subtle);padding:2px 6px;border-radius:5px">#pragma omp parallel for</strong>
-        把輸出影像的列或區塊切給多個執行緒同時處理，重點在避免 false sharing、
-        平衡每個執行緒的工作量。
-      </p>
-      <p>
-        <strong>CUDA（GPU）：</strong>把輸出影像切成多個 <strong>Block</strong>，
-        每個 Block 再切成多個 <strong>Thread</strong>，讓數千個執行緒同時計算不同的輸出像素。
-        重點不在「切得多細」，而在<strong>記憶體存取模式</strong>——
-        相鄰輸出像素會重複讀取到相同的輸入鄰域，如果每個 thread 都各自從
-        global memory 重新讀取，頻寬會成為瓶頸；所以把該 block 需要的輸入資料
-        先搬進 <strong>shared memory</strong>，讓同一 block 內的 thread 共用，
-        大幅減少對 global memory 的重複存取。
-      </p>
-    </div>
-    <div class="tags">
-      <span class="tag">C / C++</span><span class="tag">CUDA</span><span class="tag">OpenMP</span>
-      <span class="tag">Parallel Computing</span><span class="tag">GPU Memory Optimization</span>
-    </div>
-
-    <h2>記憶體存取最佳化</h2>
-    <div class="prose">
-      <p>
-        GPU 的記憶體階層由快到慢大致是 <strong>Register → Shared Memory → Global Memory</strong>，
-        容量也依序變大。最佳化的核心思路是：<strong>盡量把會被重複讀取的資料留在離運算單元最近的層級</strong>。
-        對 2D 卷積來說，具體做法包括：
-      </p>
-    </div>
-    <ul class="list">
-      <li>
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>
-        <span><strong>Tiling：</strong>每個 block 先把自己負責的輸出區域對應的輸入鄰域（含 halo 邊界）整塊搬進 shared memory，再讓 block 內所有 thread 讀取這份共用資料，而不是各自打到 global memory。</span>
-      </li>
-      <li>
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>
-        <span><strong>Coalesced access：</strong>設計 thread 對 global memory 的讀取順序，讓同一個 warp 內的 threads 存取連續的記憶體位址，善用 GPU 的合併存取機制。</span>
-      </li>
-      <li>
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>
-        <span><strong>Block/thread 維度調整：</strong>依卷積核大小與 GPU 架構的 SM 資源，調整 block 尺寸，在平行度與 shared memory 用量之間找到平衡點。</span>
-      </li>
-    </ul>
-
-    <h2>效能比較</h2>
-    <div class="prose">
-      <p>
-        比較單執行緒、OpenMP 多核心、以及 CUDA（含／不含 shared memory 最佳化）
-        在同樣輸入尺寸與卷積核下的運算時間，觀察平行化與記憶體策略各自帶來的加速幅度。
+        最直接的寫法：每個 thread 負責一個元素，直接從 global memory 讀輸入、算完直接寫回
+        global memory 的轉置位置。邏輯簡單，但輸出位置
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">index_out = x * N + y</code>
+        跟輸入位置的步進方向不同，同一個 warp 內的 threads 寫入 global memory時無法合併成單一次傳輸，
+        頻寬使用效率差。
       </p>
     </div>
     <div class="figure">
-      <svg viewBox="0 0 800 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="長條圖示意：單執行緒運算時間最長，OpenMP 多核心明顯縮短，CUDA 未最佳化版本再縮短，CUDA 搭配 shared memory 最佳化後運算時間最短。">
-        <rect width="800" height="240" fill="#fff"/>
-        <line x1="60" y1="20" x2="60" y2="200" stroke="#e8e8f0" stroke-width="1"/>
-        <line x1="60" y1="200" x2="760" y2="200" stroke="#e8e8f0" stroke-width="1"/>
-        <text x="45" y="16" font-family="JetBrains Mono, monospace" font-size="10" fill="#8b8ba3">運算時間</text>
+      <pre style="margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; color:var(--text)"><code>__global__ void transpose(Complex M_d_in[], Complex M_d_out[], int N) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
 
-        <!-- bars -->
-        <rect x="110" y="40" width="90" height="160" rx="6" fill="#ef5da8" opacity=".85"/>
-        <text x="155" y="222" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#5a5a6e">單執行緒</text>
+    if (x &lt; N &amp;&amp; y &lt; N) {
+        int index_in  = y * N + x;
+        int index_out = x * N + y;
 
-        <rect x="270" y="95" width="90" height="105" rx="6" fill="#9b5de5" opacity=".85"/>
-        <text x="315" y="222" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#5a5a6e">OpenMP</text>
+        M_d_out[index_out].real =  M_d_in[index_in].real;
+        M_d_out[index_out].imag = -M_d_in[index_in].imag;
+    }
+}</code></pre>
+      <figcaption>conj-transpose.cu — 每個 thread 直接讀寫 global memory</figcaption>
+    </div>
 
-        <rect x="430" y="140" width="90" height="60" rx="6" fill="#f2994a" opacity=".9"/>
-        <text x="475" y="222" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#5a5a6e">CUDA（基本）</text>
+    <h2>版本二：加上 Shared Memory</h2>
+    <div class="prose">
+      <p>
+        把每個 block 負責的 32×32 子矩陣先整塊搬進 shared memory
+        （<code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">tile[TILE_DIM][TILE_DIM]</code>），
+        讀取階段 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">threadIdx.x</code>
+        連續變化時對應到連續的 global memory 位址，是合併讀取（coalesced read）。
+        寫回階段的關鍵技巧：<strong>交換 blockIdx.x 和 blockIdx.y</strong>
+        來計算輸出座標，讓 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">threadIdx.x</code>
+        對應到輸出矩陣的「行」，寫回時也變成合併寫入，而不是像版本一那樣跳著寫。
+      </p>
+    </div>
+    <div class="figure">
+      <pre style="margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; color:var(--text)"><code>__shared__ Complex tile[TILE_DIM][TILE_DIM];
 
-        <rect x="590" y="168" width="90" height="32" rx="6" fill="#00b3ae"/>
-        <text x="635" y="222" text-anchor="middle" font-family="Inter, sans-serif" font-size="11.5" fill="#5a5a6e">CUDA + Shared Mem</text>
-      </svg>
-      <figcaption>示意圖：記憶體存取策略最佳化後，CUDA 版本的運算時間再進一步縮短</figcaption>
+int x = blockIdx.x * TILE_DIM + threadIdx.x;
+int y = blockIdx.y * TILE_DIM + threadIdx.y;
+int index_in = y * N + x;
+
+if (x &lt; N &amp;&amp; y &lt; N)
+    tile[threadIdx.y][threadIdx.x] = M_d_in[index_in];   // 合併讀取
+__syncthreads();
+
+// 交換 blockIdx，讓 threadIdx.x 對應輸出矩陣的「列」
+x = blockIdx.y * TILE_DIM + threadIdx.x;
+y = blockIdx.x * TILE_DIM + threadIdx.y;
+int index_out = y * N + x;
+
+if (x &lt; N &amp;&amp; y &lt; N) {
+    Complex c = tile[threadIdx.x][threadIdx.y];          // 轉置：下標互換
+    M_d_out[index_out].real =  c.real;
+    M_d_out[index_out].imag = -c.imag;
+}</code></pre>
+      <figcaption>conj-transpose-shmem.cu — 讀寫都變成合併存取，靠交換 blockIdx 而非交換資料本身做到</figcaption>
+    </div>
+
+    <h2>版本三：迴避 Bank Conflict</h2>
+    <div class="prose">
+      <p>
+        Shared memory 被切成 32 個 bank，同一個 warp 裡的 threads 如果同時存取到同一個 bank，
+        就會產生 <strong>bank conflict</strong>，讀寫必須排隊序列化。版本二讀取
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">tile[threadIdx.x][threadIdx.y]</code>
+        時，同一個 warp 內的 threads 是在讀同一「行」，因為 shared memory 是 32×32 的正方形，
+        同一行的 32 個元素剛好都落在同一個 bank 上。解法很小：<strong>把 tile 陣列寬度多加一欄</strong>
+        （<code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">tile[TILE_DIM][TILE_DIM + 1]</code>），
+        讓每一行整體錯開一個 bank，同一個 warp 存取同一行時就會分散到 32 個不同的 bank，不再互相卡住。
+      </p>
+    </div>
+    <div class="figure">
+      <pre style="margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; color:var(--text)"><code>// [TILE_DIM][TILE_DIM + 1] 的 +1 是為了避免 bank conflict
+__shared__ Complex tile[TILE_DIM][TILE_DIM + 1];</code></pre>
+      <figcaption>conj-transpose-shmem-bc-avoid.cu — 唯一改動：shared memory 陣列多加一欄 padding</figcaption>
+    </div>
+    <div class="tags">
+      <span class="tag">CUDA</span><span class="tag">C/C++</span><span class="tag">GPU</span>
+      <span class="tag">Memory Coalescing</span><span class="tag">Bank Conflict</span><span class="tag">Shared Memory</span>
+    </div>
+
+    <h2>效能結果</h2>
+    <div class="prose">
+      <p>
+        測試環境是 <strong>NVIDIA GeForce RTX 3060 Ti</strong>（CUDA 12.4.99），每個版本跑 100 次取平均。
+        矩陣大小 N=1024 時，三個版本的平均執行時間如下：
+      </p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat__num">87.1 us</div>
+        <div class="stat__label">版本一：只用 global memory</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">54.5 us</div>
+        <div class="stat__label">版本二：加上 shared memory（合併讀寫）</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">49.4 us</div>
+        <div class="stat__label">版本三：再迴避 bank conflict</div>
+      </div>
+    </div>
+    <div class="figure">
+      <img src="assets/cuda-terminal-result.jpg" alt="執行結果終端機截圖：conj-transpose（global memory 版）Correct，平均耗時 87.1059 us；conj-transpose-shmem（shared memory 版）Correct，平均耗時 54.5021 us；conj-transpose-shmem-bc-avoid（shared memory + bank conflict 迴避版）Correct，平均耗時 49.4148 us。">
+      <figcaption>三個版本的實際執行結果（terminal 輸出）</figcaption>
+    </div>
+    <div class="prose">
+      <p>
+        另外也測了 global memory 版本在不同矩陣大小下的表現：N=1024 為 96.98 us，
+        N=2048 為 325.99 us，N=4096 為 1272.52 us——執行時間隨 N² 成長，
+        符合這個運算對每個元素只做一次讀寫、沒有額外計算量的特性。
+      </p>
     </div>
 
     <div class="callout">
-      <p><strong>學到的事：</strong>GPU 平行運算的瓶頸經常不在「算得夠不夠快」，而在
-      <strong>記憶體頻寬</strong>——同樣的運算邏輯，把資料搬到 shared memory 減少重複的
-      global memory 存取，往往比單純增加 thread 數量帶來更大的加速。
-      理解硬體的記憶體階層，是寫出真正快的 CUDA 程式的關鍵。</p>
+      <p><strong>學到的事：</strong>從版本一到版本三，程式邏輯幾乎沒變、只動了資料怎麼搬進
+      shared memory 跟 shared memory 陣列的形狀，執行時間卻縮短了約 43%。
+      GPU 平行運算真正的瓶頸經常不是「算得快不快」，而是<strong>記憶體存取模式</strong>——
+      是否合併讀寫、shared memory 有沒有 bank conflict，往往比多加幾個 thread 影響更大。</p>
     </div>
 
   </div>
