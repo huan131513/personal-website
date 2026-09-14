@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>增量資料庫可擦除樣式探勘 — Tzu-Huan Peng</title>
-<meta name="description" content="Dynamic Removable Pattern Mining：可動態增加資料庫的樣式探勘演算法，計算商品利潤並找出值得捆綁銷售的組合，總利潤較使用前上升 34%。">
+<meta name="description" content="Dynamic Removable Pattern Mining：用 Java 物件導向設計實作的可動態增加資料庫樣式探勘演算法，計算商品利潤並找出值得捆綁銷售的組合，總利潤較使用前上升 34%。">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#fbfbfd">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,19 +31,23 @@
 
 <main>
   <div class="wrap hero" style="--hue:var(--teal)">
-    <p class="eyebrow">02 · Selected Work · 2024 — Dynamic Removable Pattern Mining</p>
+    <p class="eyebrow">其他專案 · Selected Work · 2024 — Dynamic Removable Pattern Mining</p>
     <h1>增量資料庫可擦除樣式探勘</h1>
     <p class="hero__lede">
       零售商想知道「哪些商品利潤太低、可以跟其他商品捆在一起賣」，但交易資料庫每天都在增長。
-      這個大學專題實作了一套<strong>可動態增加資料庫應用的樣式探勘演算法</strong>：
-      新的銷售記錄進來時，只需要針對新數據對原有結果的影響做調整，
-      不必把整個資料庫重新計算一次。
+      這個大學專題用 <strong>Java 物件導向設計</strong>實作了一套
+      <strong>可動態增加資料庫應用的樣式探勘演算法</strong>：新的銷售記錄進來時，
+      只需要針對新數據對原有結果的影響做調整，不必把整個資料庫重新計算一次。
     </p>
 
     <div class="meta-row">
       <span class="meta-chip">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="2.5" width="11" height="11" rx="2"/><path d="M2.5 6h11M6 2.5v11"/></svg>
         資料探勘 / 演算法
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M7 6l-3 4 3 4M13 6l3 4-3 4"/></svg>
+        Java / OOP
       </span>
       <span class="meta-chip">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
@@ -94,14 +98,44 @@
         從單一商品開始，逐步往上組成兩兩配對、三個一組的組合，
         每一層都只需要根據下一層已經算好的結果延伸，而不是每次都重新窮舉。
       </p>
-    </div>
-    <div class="figure">
-      <img src="assets/pattern-mining-graph.jpg" alt="樣式候選集合的 Graph Representation：由單一商品節點逐層向下擴展成雙商品、三商品組合節點，箭頭表示組合關係。">
-      <figcaption>候選樣式的分層結構：單一商品 → 兩兩組合 → 三個一組，新資料只需增量更新受影響的節點</figcaption>
+      <p>
+        每個候選樣式（pattern）都對應一個<strong>效用值（utility）</strong>，由該商品組合在交易紀錄中
+        累積的利潤貢獻計算而來；低於門檻的樣式會被標記為「可擦除」。新交易加入時，
+        演算法只重新計算<strong>受影響節點的效用值</strong>，並視情況讓格結構往下一層擴張，
+        沒被新資料觸及的節點完全不用動。
+      </p>
     </div>
     <div class="tags">
-      <span class="tag">Java</span><span class="tag">Python</span>
+      <span class="tag">Java</span><span class="tag">OOP</span>
       <span class="tag">Data Mining</span><span class="tag">Incremental Algorithm</span>
+    </div>
+
+    <h2>Java 物件導向設計</h2>
+    <div class="prose">
+      <p>
+        整個系統用 <strong>Java</strong> 開發，刻意把「資料怎麼存」「效用怎麼算」「格結構怎麼長大」
+        這三件事拆成各自獨立的類別，而不是寫成一支從頭到尾的流程腳本：
+      </p>
+    </div>
+    <ul class="list">
+      <li>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>
+        <span><strong>交易資料層：</strong>負責讀取與封裝原始交易紀錄，跟後面的探勘邏輯完全解耦——資料來源要換格式，不用去動演算法本身。</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>
+        <span><strong>Pattern 節點物件：</strong>每個候選商品組合都是一個物件，自己保存商品集合、目前的效用值、是否已標記為可擦除，把「一個樣式該有的狀態」封裝在一起，而不是散落在陣列或雜湊表裡用索引拼湊。</span>
+      </li>
+      <li>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.5 3.5L13 4.5"/></svg>
+        <span><strong>增量更新邏輯：</strong>獨立成一個模組，只負責「新交易進來後要動哪些節點、格結構要不要長一層」，跟效用計算的細節切開，方便單獨測試正確性。</span>
+      </li>
+    </ul>
+    <div class="prose">
+      <p>
+        這樣拆分的好處是<strong>職責單一、容易單獨測試</strong>：要驗證「效用值算得對不對」跟
+        「增量更新有沒有漏掉受影響的節點」可以分開驗證，不用每次都跑一次完整流程才能抓到問題出在哪一層。
+      </p>
     </div>
 
     <h2>成果</h2>
@@ -122,10 +156,27 @@
       </div>
     </div>
 
+    <h2>候選樣式怎麼一層一層長出來</h2>
+    <div class="prose">
+      <p>
+        下面這張動畫示範了格結構實際擴張的樣子：一開始只有<strong>單一商品節點</strong>
+        （B、A、E、C、G、D、H、J、F），新交易讓某些商品開始一起出現後，
+        中間層的<strong>兩兩組合</strong>（如 ED、EF、GH）就會長出來；當交易資料裡
+        出現三個商品一起賣的紀錄，最下層的<strong>三商品組合</strong>
+        （如 EDF、GHJ、GJF）才會被建立。每一層都只根據上一層已經存在的節點延伸，
+        不會整個格重新算一遍。
+      </p>
+    </div>
+    <div class="figure">
+      <img src="assets/pattern-mining-lattice.gif" alt="動畫：格結構從只有單一商品節點的兩層（單一商品 + 兩兩組合），隨新交易資料加入逐漸長出第三層三商品組合節點（如 EDF、GHJ、GHF、GJF、DJF、HJF），展示候選樣式如何逐層增量擴張。">
+      <figcaption>格結構隨新交易資料由兩層擴張為三層：單一商品 → 兩兩組合 → 三商品組合</figcaption>
+    </div>
+
     <div class="callout">
       <p><strong>學到的事：</strong>增量演算法真正的難點不在「怎麼算」，而在「怎麼確保只更新受影響的部分還能維持正確性」——
       商品組合的候選集合會隨新資料擴張或收斂，資料結構如果設計得不好，
-      「增量」就只是名義上的，實際上還是得把很多東西重算一次。</p>
+      「增量」就只是名義上的，實際上還是得把很多東西重算一次。把資料、狀態、更新邏輯用物件導向拆開，
+      是讓這件事真正可行、也可測試的關鍵。</p>
     </div>
 
   </div>
