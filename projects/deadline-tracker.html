@@ -79,16 +79,18 @@
       </p>
     </div>
 
-    <h2>認證方式：讀本機 Chrome 的登入 session</h2>
+    <h2>我的認證方式：讀本機 Chrome 的登入 session</h2>
     <div class="prose">
       <p>
-        既然沒有 token，這個工具改用<strong>讀取本機 Chrome 目前登入 NTUCOOL 的 session cookie</strong>
-        （靠 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">browser_cookie3</code>
-        套件），不存密碼、不用手動複製貼上，也不必自動化登入流程去冒存密碼的風險。
-        代價是<strong>整個系統只能在使用者本機執行</strong>——雲端服務碰不到本機瀏覽器的資料，
-        所以這是刻意選擇的架構限制，不是技術債。中間也比較過爬蟲、Token、手動複製 cookie、
-        Bookmarklet、純前端讀 cookie 等將近十種方案，最後認證方式的取捨過程完整寫進專案的
-        README，作為之後回頭檢視決策的紀錄。
+        既然沒有token，我嘗試讓系統自動拿帳號密碼登入NTUCOOL，但是將永久性的帳密交給系統顯然不是一個安全的做法。
+      </p>
+      <p>
+        後來想到每次登入NTUCOOL時，都會<strong>產生一組隨機的session識別碼並儲存在本機的cookie資料庫</strong>（靠 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">browser_cookie3</code>
+        套件），我可以拿這個cookie打Canvas API。
+        於是我寫了一個自動讀取cookie的程式，每次都會到資料庫讀取最新的cookie並寫入程式中。
+      </p>
+      <p>
+        這個做法的代價是<strong>整個系統只能在使用者本機執行</strong>，無法部署到雲端服務，且需要定時登入NTUCOOL並時常開著該頁面。
       </p>
     </div>
     <div class="tags">
