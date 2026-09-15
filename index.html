@@ -1024,6 +1024,49 @@ footer a:hover{color:var(--indigo)}
       </div>
 
       <div class="proj-category">
+        <p class="proj-category__label" style="--hue:var(--indigo)">電腦視覺</p>
+        <div class="proj-row">
+          <a class="card" href="projects/visual-odometry.html" style="--hue:var(--indigo)">
+            <div class="card__top">
+              <div class="card__badge">01</div>
+              <span class="card__year">2025</span>
+            </div>
+            <h3 class="card__title">Visual Odometry <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              手刻單目視覺里程計：相機校正、ORB 特徵追蹤、Essential Matrix 姿態回復，
+              用 Open3D 畫出 3D 相機軌跡，額外實作 recoverPose 與 loop detection。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              手刻 Essential Matrix + Loop Detection
+            </span>
+            <div class="tags">
+              <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">Open3D</span>
+            </div>
+          </a>
+
+          <a class="card" href="projects/homography-estimation.html" style="--hue:var(--teal)">
+            <div class="card__top">
+              <div class="card__badge">02</div>
+              <span class="card__year">2025</span>
+            </div>
+            <h3 class="card__title">Homography Estimation <span class="arrow">↗</span></h3>
+            <p class="card__desc">
+              用 SIFT 特徵配對、象限分散取樣與 Normalized DLT + RANSAC 手刻 Homography 估計，
+              再用雙線性插值把來源圖片 warp 成目標圖片視角。
+            </p>
+            <span class="card__metric">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+              Normalized DLT + RANSAC
+            </span>
+            <div class="tags">
+              <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">NumPy</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="proj-category">
         <p class="proj-category__label" style="--hue:var(--violet)">其他專案</p>
         <div class="proj-row">
           <a class="card" href="projects/pattern-mining.html" style="--hue:var(--teal)">

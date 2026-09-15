@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Visual Odometry — Tzu-Huan Peng</title>
+<meta name="description" content="從相機校正、ORB 特徵追蹤、Essential Matrix 姿態回復到 Open3D 3D 軌跡視覺化，手刻一套單目視覺里程計，並額外實作 Essential Matrix 估計、recoverPose 與 loop detection。">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#fbfbfd">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="ambient" aria-hidden="true">
+  <div class="blob blob--1"></div>
+  <div class="blob blob--2"></div>
+</div>
+
+<nav class="nav">
+  <div class="nav__inner">
+    <a class="brand" href="../index.html"><span class="brand__mark">H</span>Huan</a>
+    <a class="back" href="../index.html#projects">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3.5L4.5 8l5.5 4.5"/></svg>
+      回作品列表
+    </a>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap hero" style="--hue:var(--indigo)">
+    <p class="eyebrow">其他專案 · Selected Work · 2025</p>
+    <h1>Visual Odometry</h1>
+    <p class="hero__lede">
+      3D Computer Vision 課程作業：用一支手機攝影機拍的連續影格，
+      手刻一套<strong>單目視覺里程計（Monocular VO）</strong>——相機校正、<strong>ORB</strong> 特徵追蹤、
+      <strong>Essential Matrix</strong> 估計與 <strong>recoverPose</strong> 姿態回復，
+      再用 <strong>Open3D</strong> 即時畫出相機在 3D 空間中的移動軌跡。Bonus 額外手刻了
+      Essential Matrix 估計、recoverPose 與 loop detection。
+    </p>
+
+    <div class="meta-row">
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="2" width="12" height="12" rx="2"/><rect x="5.5" y="5.5" width="5" height="5" rx="1"/></svg>
+        電腦視覺 / SfM
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 11l3.5-3.5L8 10l5.5-5.5"/><path d="M10 4.5h3.5V8"/></svg>
+        3D Computer Vision · HW3
+      </span>
+      <span class="meta-chip">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="6.2"/><path d="M8 4.5V8l2.4 1.4"/></svg>
+        2025
+      </span>
+    </div>
+
+    <!-- cover: VO pipeline — calibration → ORB tracking → essential matrix → recoverPose → 3D trajectory -->
+    <div class="cover">
+      <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="流程示意圖：先用棋盤格影片做相機校正得到內參與畸變係數，接著逐幀用 ORB 找特徵點並用 BFMatcher 配對相鄰影格，再用配對點算出 Essential Matrix，透過 recoverPose 從四組解中選出正確的旋轉與平移，最後把每一幀的相機姿態累積起來，用 Open3D 畫出 3D 相機軌跡。">
+        <defs>
+          <linearGradient id="bgVo" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5b5bd6" stop-opacity=".09"/>
+            <stop offset="1" stop-color="#00b3ae" stop-opacity=".08"/>
+          </linearGradient>
+          <marker id="arrVo" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#8b8ba3"/></marker>
+        </defs>
+        <rect width="900" height="300" fill="url(#bgVo)"/>
+
+        <!-- step 1: calibration -->
+        <g transform="translate(30,40)">
+          <rect width="164" height="200" rx="12" fill="#fff" stroke="#d6d6e4" stroke-width="1.6"/>
+          <text x="82" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5" fill="#16161d">1. Calibration</text>
+          <g stroke="#8b8ba3" stroke-width="1">
+            <line x1="30" y1="50" x2="134" y2="50"/><line x1="30" y1="76" x2="134" y2="76"/>
+            <line x1="30" y1="102" x2="134" y2="102"/><line x1="30" y1="128" x2="134" y2="128"/>
+            <line x1="56" y1="40" x2="56" y2="140"/><line x1="82" y1="40" x2="82" y2="140"/><line x1="108" y1="40" x2="108" y2="140"/>
+          </g>
+          <rect x="30" y="50" width="26" height="26" fill="#16161d"/>
+          <rect x="82" y="50" width="26" height="26" fill="#16161d"/>
+          <rect x="56" y="76" width="26" height="26" fill="#16161d"/>
+          <rect x="108" y="76" width="26" height="26" fill="#16161d"/>
+          <rect x="30" y="102" width="26" height="26" fill="#16161d"/>
+          <rect x="82" y="102" width="26" height="26" fill="#16161d"/>
+          <text x="82" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">K, dist coeffs</text>
+        </g>
+        <path d="M200 140h30" stroke="#8b8ba3" stroke-width="2" fill="none" marker-end="url(#arrVo)"/>
+
+        <!-- step 2: ORB tracking -->
+        <g transform="translate(238,40)">
+          <rect width="164" height="200" rx="12" fill="#fff" stroke="#5b5bd6" stroke-width="1.8"/>
+          <text x="82" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5" fill="#16161d">2. ORB Tracking</text>
+          <rect x="20" y="50" width="55" height="90" rx="6" fill="#f4f4f8" stroke="#d6d6e4"/>
+          <rect x="90" y="50" width="55" height="90" rx="6" fill="#f4f4f8" stroke="#d6d6e4"/>
+          <g stroke="#5b5bd6" stroke-width="1" opacity=".8">
+            <line x1="35" y1="70" x2="105" y2="65"/>
+            <line x1="40" y1="100" x2="110" y2="105"/>
+            <line x1="55" y1="120" x2="125" y2="115"/>
+          </g>
+          <text x="82" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">frame k ↔ frame k+1</text>
+        </g>
+        <path d="M408 140h30" stroke="#8b8ba3" stroke-width="2" fill="none" marker-end="url(#arrVo)"/>
+
+        <!-- step 3: essential matrix + recoverPose -->
+        <g transform="translate(446,40)">
+          <rect width="182" height="200" rx="12" fill="#fff" stroke="#f2994a" stroke-width="1.8"/>
+          <text x="91" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5" fill="#16161d">3. E + recoverPose</text>
+          <text x="91" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700" font-size="15" fill="#b5651d">E → (R, t)</text>
+          <text x="91" y="128" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#8b8ba3">4 組解 → cheirality</text>
+          <text x="91" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">選 Z&gt;0 的唯一解</text>
+        </g>
+        <path d="M638 140h30" stroke="#8b8ba3" stroke-width="2" fill="none" marker-end="url(#arrVo)"/>
+
+        <!-- step 4: 3D trajectory -->
+        <g transform="translate(676,40)">
+          <rect width="192" height="200" rx="12" fill="#fff" stroke="#ef5da8" stroke-width="1.8"/>
+          <text x="96" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5" fill="#16161d">4. 3D Trajectory</text>
+          <polyline points="30,150 55,90 90,110 125,60 160,80" fill="none" stroke="#ef5da8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="30" cy="150" r="3.5" fill="#ef5da8"/><circle cx="160" cy="80" r="3.5" fill="#ef5da8"/>
+          <text x="96" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9.5" fill="#8b8ba3">Open3D LineSet</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="wrap content" style="--hue:var(--indigo)">
+
+    <h2>要解決的問題</h2>
+    <div class="prose">
+      <p>
+        這是「3D Computer Vision」課程的作業：給定一段連續影格（自己手機拍攝的影片），
+        在不用任何深度感測器、只靠單一相機影像的前提下，逐幀估計相機在 3D 空間中的<strong>相對運動</strong>，
+        累積成完整的移動軌跡——這正是 <strong>SfM（Structure from Motion）</strong> 與 SLAM 系統中
+        Visual Odometry 模組要解決的問題。作業分成三個階段：相機校正、逐幀 Tracking、3D 視覺化，
+        Bonus 則要求手刻 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">cv2.findEssentialMat</code>、
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">cv2.recoverPose</code>，
+        以及額外的 loop detection。
+      </p>
+    </div>
+
+    <h2>1. Camera Calibration</h2>
+    <div class="prose">
+      <p>
+        拍一段棋盤格從不同角度入鏡的校正影片，逐張偵測棋盤角點，用
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">cv2.calibrateCamera</code>
+        解出<strong>相機內參矩陣（intrinsic matrix）K</strong> 與<strong>畸變係數（distortion coefficients）</strong>。
+        這一步是後續所有幾何計算的基礎——沒有精準的 K，Essential Matrix 與姿態估計都會系統性偏移。
+      </p>
+    </div>
+    <div class="figure">
+      <pre style="margin:0; padding:14px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12px; line-height:1.65; color:var(--text)"><code>python3.11 camera_calibration.py case1/calib_video_case1.avi --h 8 --w 6 --output camera_parameters_case1.npy
+
+=&gt; corners found in 6 images
+=&gt; Overall RMS re-projection error: 0.2584
+Camera Intrinsic
+[[493.99   0.    311.86]
+ [  0.   494.08  187.33]
+ [  0.     0.      1.  ]]
+Distortion Coefficients
+[[ 0.2264 -1.8418 -0.0031  0.0018  4.0550]]</code></pre>
+      <figcaption>camera_calibration.py 執行輸出：6 張棋盤格影像、重投影誤差 0.258，解出 K 與畸變係數</figcaption>
+    </div>
+    <div class="figure">
+      <img src="assets/vo-calibration.gif" alt="動畫：相機對著棋盤格從不同角度拍攝，OpenCV 即時偵測並標出棋盤內角點，用於逐張收集校正影像。">
+      <figcaption>相機校正過程：逐張偵測棋盤格角點，收集足夠張數後解出內參與畸變係數</figcaption>
+    </div>
+
+    <h2>2. Tracking</h2>
+    <div class="prose">
+      <p>
+        逐幀處理：先用 <strong>ORB</strong> 找特徵點（比 SIFT 快很多，適合逐幀即時處理），
+        用 <strong>BFMatcher</strong>（Hamming distance）搭配 ratio test 配對相鄰兩幀，
+        再用相機內參與畸變係數對配對點做<strong>去畸變（undistort）</strong>，
+        接著算出 <strong>Essential Matrix</strong>，最後用 <strong>recoverPose</strong>
+        回復出這一幀相對於上一幀的旋轉 R 與平移 t，累加到全域姿態上。
+      </p>
+    </div>
+    <div class="figure">
+      <pre style="margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; color:var(--text)"><code>orb = cv.ORB_create(nfeatures=2000)
+kp1, des1 = orb.detectAndCompute(img_prev, None)
+kp2, des2 = orb.detectAndCompute(img, None)
+
+bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=False)
+matches = bf.knnMatch(des1, des2, k=2)
+good_matches = [m for m, n in matches if m.distance &lt; 0.75 * n.distance]
+
+# 去畸變（用校正得到的 K 與 dist）
+points1 = cv.undistortPoints(pts1_distorted, self.K, self.dist, P=self.K)
+points2 = cv.undistortPoints(pts2_distorted, self.K, self.dist, P=self.K)
+
+# Essential Matrix
+E, mask_E = cv.findEssentialMat(points1, points2, self.K,
+                                 method=cv.RANSAC, prob=0.999, threshold=1.0)
+
+# 從 E 回復出正確的 (R, t)
+_, R_new, t_new, mask_pose = cv.recoverPose(E, points1, points2, self.K)
+
+# 累積相機運動：新姿態 = 舊旋轉 × 新旋轉，舊平移 + 舊旋轉 × 新平移
+t = t + R @ t_new
+R = R @ R_new</code></pre>
+      <figcaption>process_frames() 核心邏輯 — ORB 配對 → 去畸變 → Essential Matrix → recoverPose → 累積姿態</figcaption>
+    </div>
+    <div class="prose">
+      <p>
+        <strong>recoverPose 在做什麼？</strong>Essential Matrix 做 SVD 分解後，數學上必定對應到
+        <strong>4 組可能的 (R, t) 解</strong>：(R₁,+t)、(R₁,−t)、(R₂,+t)、(R₂,−t)，四組都滿足對極幾何方程式。
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">recoverPose</code>
+        對這 4 組解分別做簡單三角化，檢查算出的 3D 點深度（Z 座標），
+        選出「讓大部分點都在兩台相機前方」的那一組——這個<strong>手性檢查（cheirality check）</strong>
+        就是為什麼 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">findEssentialMat</code>
+        後面一定要接 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">recoverPose</code> 的原因。
+      </p>
+    </div>
+
+    <h2>3. Result Visualization</h2>
+    <div class="prose">
+      <p>
+        用 <strong>Open3D</strong> 的 <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">LineSet</code>
+        畫出相機的視錐（frustum）形狀：定義中心點與四個角的 5 個頂點、8 條連接邊，
+        每一幀都用當前累積的 (R, t) 把這個視錐轉換到世界座標系並加進場景，
+        逐幀疊加後就形成一條連續的 3D 相機軌跡。
+      </p>
+    </div>
+    <div class="figure">
+      <pre style="margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; color:var(--text)"><code>scale = 0.3
+points = np.array([
+    [0, 0, 0],                       # 相機中心
+    [-scale, -scale, scale], [scale, -scale, scale],
+    [scale, scale, scale], [-scale, scale, scale],   # 四個角
+])
+lines = np.array([[0,1],[0,2],[0,3],[0,4], [1,2],[2,3],[3,4],[4,1]])
+
+points_world = (R @ points.T).T + t.T                # 轉換到世界座標
+
+line_set = o3d.geometry.LineSet()
+line_set.points = o3d.utility.Vector3dVector(points_world)
+line_set.lines  = o3d.utility.Vector2iVector(lines)
+vis.add_geometry(line_set)</code></pre>
+      <figcaption>每一幀都畫一個相機視錐並疊加，形成連續的 3D 軌跡</figcaption>
+    </div>
+
+    <div class="tags">
+      <span class="tag">Python</span><span class="tag">OpenCV</span><span class="tag">Open3D</span>
+      <span class="tag">ORB</span><span class="tag">Essential Matrix</span><span class="tag">RANSAC</span>
+    </div>
+
+    <h2>結果</h2>
+    <div class="prose">
+      <p>
+        測了兩段自行拍攝的校園影片。畫面左上角即時顯示 <strong>Tracked / Inliers</strong> 數量，
+        綠色點是通過 Essential Matrix RANSAC 篩選後的內點特徵；右側則是 Open3D 即時累積出的
+        3D 相機軌跡（俯視角），Case 2 的路徑繞了一圈後回到接近起點的位置——這正是後面
+        loop detection 想要驗證的場景。
+      </p>
+    </div>
+    <div class="figure">
+      <img src="assets/vo-case1-trajectory.gif" alt="動畫：街道畫面左上角顯示 Tracked 與 Inliers 數量，畫面中大量綠色特徵點標記在腳踏車、路樹與車輛上，代表逐幀追蹤到的內點特徵。">
+      <figcaption>Case 1：逐幀 ORB 特徵追蹤畫面，綠色點是通過 Essential Matrix RANSAC 篩選的 inliers</figcaption>
+    </div>
+    <div class="figure">
+      <img src="assets/vo-case1-topview.jpg" alt="Open3D 視窗中的俯視角紅色點狀軌跡線，路徑先直線前進一段後向右轉彎，形成一個開放的多邊形折線。">
+      <figcaption>Case 1 軌跡的俯視角：直線走廊後接一個轉彎，路徑呈開放折線（純逐幀姿態累積）</figcaption>
+    </div>
+    <div class="figure">
+      <img src="assets/vo-case2-trajectory.gif" alt="動畫：校園街道畫面左上角顯示 Tracked 與 Inliers 數量，綠色特徵點標記在腳踏車、路樹與汽車上，畫面持續隨相機移動而變化。">
+      <figcaption>Case 2：逐幀 ORB 特徵追蹤畫面，行經腳踏車停車格與林蔭道</figcaption>
+    </div>
+    <div class="figure">
+      <img src="assets/vo-case2-topview.jpg" alt="Open3D 視窗中的俯視角紅色點狀軌跡線，呈現一個不規則四邊形迴圈，起點與終點的位置非常接近，只有些微誤差沒有完全重合。">
+      <figcaption>Case 2 軌跡的俯視角：整體路徑接近封閉迴圈，起點與終點僅有些微誤差（純逐幀累積、未做任何漂移校正）</figcaption>
+    </div>
+
+    <h2>Bonus 1 & 2：手刻 Essential Matrix 與 recoverPose</h2>
+    <div class="prose">
+      <p>
+        不呼叫 OpenCV 內建函式，自己實作 <strong>8-point algorithm</strong> 估計 Essential Matrix：
+        先用內參把像素座標轉成相機歸一化座標，組出線性方程組後 SVD 求解，
+        再強制<strong>秩為 2（rank-2 constraint）</strong>讓結果符合 Essential Matrix 的數學性質；
+        搭配 <strong>Sampson error</strong> 當作 RANSAC 的內點判準，比單純的代數誤差更貼近真實幾何誤差。
+      </p>
+    </div>
+    <div class="figure">
+      <pre style="margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; color:var(--text)"><code>def eight_point_E(x1, x2):
+    # x1, x2: (N,2) 相機歸一化座標
+    A = np.zeros((x1.shape[0], 9))
+    A[:,0]=x2[:,0]*x1[:,0]; A[:,1]=x2[:,0]*x1[:,1]; A[:,2]=x2[:,0]
+    A[:,3]=x2[:,1]*x1[:,0]; A[:,4]=x2[:,1]*x1[:,1]; A[:,5]=x2[:,1]
+    A[:,6]=x1[:,0];         A[:,7]=x1[:,1];         A[:,8]=1.0
+
+    _, _, Vt = np.linalg.svd(A)
+    E = Vt[-1].reshape(3, 3)
+
+    U, S, Vt = np.linalg.svd(E)                 # 強制 rank-2
+    S[2] = 0.0
+    return U @ np.diag(S) @ Vt
+
+def sampson_error(E, x1n, x2n):
+    x1h = np.hstack([x1n, np.ones((len(x1n), 1))])
+    x2h = np.hstack([x2n, np.ones((len(x2n), 1))])
+    Ex1  = (E @ x1h.T).T
+    Etx2 = (E.T @ x2h.T).T
+    num = np.sum(x2h * (E @ x1h.T).T, axis=1) ** 2
+    denom = Ex1[:,0]**2 + Ex1[:,1]**2 + Etx2[:,0]**2 + Etx2[:,1]**2
+    return num / np.clip(denom, 1e-12, np.inf)</code></pre>
+      <figcaption>8-point algorithm 求 E（強制 rank-2）+ Sampson error 當 RANSAC 內點判準</figcaption>
+    </div>
+    <div class="prose">
+      <p>
+        <code style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">recover_pose_custom()</code>
+        則對 SVD 分解出的 4 組候選 (R, t) 逐一做<strong>線性三角化</strong>，
+        統計每組解讓多少點同時落在兩台相機前方（Z &gt; 0），取 count 最高的一組作為最終姿態——
+        跟 OpenCV 內部的邏輯一致，只是自己刻了三角化與計數過程。
+      </p>
+    </div>
+    <div class="figure">
+      <pre style="margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; color:var(--text)"><code>def recover_pose_custom(E, pts1_px, pts2_px, K, inlier_mask=None):
+    x1n = normalize_points_with_K(pts1_px, K)
+    x2n = normalize_points_with_K(pts2_px, K)
+
+    R1, R2, tvec = decompose_essential(E)       # SVD 分解 E
+    candidates = [(R1, tvec), (R1, -tvec), (R2, tvec), (R2, -tvec)]
+
+    best_count, best_R, best_t = -1, None, None
+    P0 = np.hstack([np.eye(3), np.zeros((3, 1))])
+
+    for R_cand, t_cand in candidates:
+        P1 = np.hstack([R_cand, t_cand.reshape(3, 1)])
+        count_front = 0
+        for x1, x2 in zip(x1n, x2n):
+            X = triangulate_linear(P0, P1, x1, x2)[:3]   # 線性三角化
+            if X[2] &gt; 0 and (R_cand @ X + t_cand)[2] &gt; 0:
+                count_front += 1                          # 兩台相機前方都看得到
+        if count_front &gt; best_count:
+            best_count, best_R, best_t = count_front, R_cand, t_cand.reshape(3, 1)
+
+    return best_count, best_R, best_t</code></pre>
+      <figcaption>recover_pose_custom() — 手性檢查：4 組解各自三角化，選深度都為正的那一組</figcaption>
+    </div>
+
+    <h2>Bonus 3：Loop Detection</h2>
+    <div class="prose">
+      <p>
+        Case 2 的軌跡最後繞回起點附近，代表相機看到了曾經看過的場景——這正是 loop detection 要抓的訊號。
+        做法分三步：
+      </p>
+      <ul style="padding-left:1.2em; margin:12px 0 0; display:flex; flex-direction:column; gap:6px;">
+        <li><strong>關鍵影格：</strong>每經過固定幀數挑一個關鍵影格，存下該幀的 inlier 特徵點與姿態</li>
+        <li><strong>候選搜尋：</strong>新關鍵影格出現時，用 ORB 描述子跟資料庫裡「非最近幾幀」的關鍵影格做配對，快速篩出候選</li>
+        <li><strong>幾何驗證：</strong>對候選重新做 Homography + RANSAC，inlier 數需超過門檻才判定為真正的 loop，避免只是視覺相似造成的誤判</li>
+      </ul>
+    </div>
+    <div class="figure">
+      <pre style="margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--font-mono); font-size:12.5px; line-height:1.7; color:var(--text)"><code>loop_detected, loop_kf_idx = False, -1
+if des2 is not None and len(kp2) &gt;= 20 and len(keyframes) &gt; recent_ignore:
+    for kf in keyframes[:-recent_ignore]:            # 跳過最近的關鍵影格，避免瑣碎匹配
+        matches_kf = bf.knnMatch(kf['des'], des2, k=2)
+        good_kf = [m for m, n in matches_kf if m.distance &lt; 0.75 * n.distance]
+
+        if len(good_kf) &gt;= 40:
+            pts_db  = np.float32([kf['kp'][m.queryIdx].pt for m in good_kf]).reshape(-1,1,2)
+            pts_cur = np.float32([kp2[m.trainIdx].pt for m in good_kf]).reshape(-1,1,2)
+            H, mask_H = cv.findHomography(pts_db, pts_cur, cv.RANSAC, 3.0)
+
+            if mask_H is not None and np.count_nonzero(mask_H) &gt;= loop_inlier_thresh:
+                loop_detected, loop_kf_idx = True, kf['idx']
+                break</code></pre>
+      <figcaption>loop detection — 候選搜尋（ORB 配對數）+ 幾何驗證（Homography inliers）雙重門檻</figcaption>
+    </div>
+    <div class="figure">
+      <img src="assets/vo-loop-detected.jpg" alt="街道場景畫面，畫面左上角文字顯示 Tracked: 468、Inliers: 466，並以黃色文字顯示 Loop Detected: KF 15，畫面中散布大量綠色特徵點標記在路樹、腳踏車與道路上。">
+      <figcaption>成功偵測到 loop：與第 15 個關鍵影格通過幾何驗證，畫面上標示「Loop Detected: KF 15」</figcaption>
+    </div>
+    <div class="figure">
+      <img src="assets/vo-loop-trajectory.jpg" alt="紅色點狀軌跡線圖，路徑交錯繞了數圈並多次自我相交，顯示相機在同一區域內來回移動多次，是測試 loop detection 用的路徑。">
+      <figcaption>另一段測試路徑：相機在同一區域多次繞行，用來驗證 loop detection 在重複路徑下仍能正確判斷</figcaption>
+    </div>
+
+    <div class="callout">
+      <p><strong>學到的事：</strong>單目 VO 沒有尺度資訊（scale ambiguity），純靠逐幀姿態累積，
+      軌跡會隨著幀數增加持續<strong>漂移（drift）</strong>——Case 2 起點與終點對不齊就是證據。
+      Loop detection 提供了「回到同一個地方」的訊號，是後續做 <strong>pose graph 優化</strong>
+      校正漂移的前提；手刻 Essential Matrix 和 recoverPose 也讓我更清楚
+      OpenCV 那幾行函式呼叫背後，藏著整套對極幾何與三角化的數學。</p>
+    </div>
+
+  </div>
+
+  <nav class="proj-nav wrap">
+    <a class="prev" href="campus-map.html">
+      <span class="dir">↑ 上一個</span>
+      <span class="title">校園地圖</span>
+    </a>
+    <a class="next" href="homography-estimation.html">
+      <span class="dir">下一個 ↓</span>
+      <span class="title">Homography Estimation</span>
+    </a>
+  </nav>
+</main>
+
+<footer class="wrap">
+  <span>© <span id="year">2026</span> Huan（Peng Tzu-Huan）</span>
+  <a href="../index.html#projects">回作品列表</a>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
