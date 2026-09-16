@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>OpVerse — Lung SLAM — Tzu-Huan Peng</title>
+  <meta name="description"
+    content="NTU imLab OpVerse 專案的胸腔內視鏡 SLAM 模組：把 DROID-SLAM 應用在單眼內視鏡影片上，自訂符合高反光、動態模糊特性的 keyframe 篩選機制，從影片重建相機軌跡與稀疏 3D 點雲。">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#fbfbfd">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="ambient" aria-hidden="true">
+    <div class="blob blob--1"></div>
+    <div class="blob blob--2"></div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav__inner">
+      <a class="brand" href="../index.html"><span class="brand__mark">H</span>Huan</a>
+      <a class="back" href="../index.html#projects">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M10 3.5L4.5 8l5.5 4.5" />
+        </svg>
+        回作品列表
+      </a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="wrap hero" style="--hue:var(--rose)">
+      <p class="eyebrow">電腦視覺 · Selected Work · 2026</p>
+      <h1>OpVerse — Lung SLAM</h1>
+      <p class="hero__lede">
+        NTU imLab <a href="https://www.opverse.ai/" target="_blank" rel="noopener">OpVerse</a> 專案的一環：
+        實驗室已有「把虛擬器官疊合到病人身上」的 AR 技術，但必須戴著 VR 頭盔操作。
+        這個子專案要做的是把 <strong>DROID-SLAM</strong> 應用在胸腔內視鏡影片上，
+        抽換掉官方的 keyframe 篩選機制、改用自訂的<strong>高反光／動態模糊</strong>偵測，
+        從單眼內視鏡影片重建<strong>相機軌跡</strong>與<strong>稀疏 3D 點雲</strong>，
+        未來可以不戴頭盔、直接在外接螢幕的內視鏡畫面上標出虛擬腫瘤位置。
+      </p>
+
+      <div class="meta-row">
+        <span class="meta-chip">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="2" y="2" width="12" height="12" rx="2" />
+            <rect x="5.5" y="5.5" width="5" height="5" rx="1" />
+          </svg>
+          電腦視覺 / SLAM / 醫療 AR
+        </span>
+        <span class="meta-chip">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M2 11l3.5-3.5L8 10l5.5-5.5" />
+            <path d="M10 4.5h3.5V8" />
+          </svg>
+          NTU imLab · OpVerse
+        </span>
+        <span class="meta-chip">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6">
+            <circle cx="8" cy="8" r="6.2" />
+            <path d="M8 4.5V8l2.4 1.4" />
+          </svg>
+          2026
+        </span>
+        <a class="meta-chip" href="https://github.com/huan131513/lung-slam" target="_blank" rel="noopener"
+          style="text-decoration:none">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path
+              d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z" />
+          </svg>
+          github.com/huan131513/lung-slam
+        </a>
+      </div>
+      <div class="figure">
+        <img src="assets/Opverse-result.png"
+          alt="手術導航：經過影像疊合，醫師未來可以在內視鏡映像中及時知道tumer的位置">
+        <figcaption>手術導航：經過影像疊合，醫師未來可以在內視鏡映像中及時知道target的位置</figcaption>
+      </div>
+    </div>
+
+    <div class="wrap content" style="--hue:var(--rose)">
+
+      <h2>製作背景</h2>
+      <div class="prose">
+        <p>
+          實驗室在 <strong>OpVerse</strong> 專案中已經有一套「把虛擬器官疊合到真實病人身上」的技術，
+          能讓醫師在術前戴著 VR 頭盔「透視」病人體內的腫瘤位置。但這套技術必須戴著頭盔操作，
+          不方便在手術過程中持續使用。如果能把虛擬器官疊合直接接到<strong>內視鏡影像</strong>上，
+          就能不靠頭盔、直接在外接螢幕上看到虛擬器官與腫瘤位置——
+          而要做到這件事，第一步得先解決「內視鏡在病人體內的即時位置」怎麼算出來，這正是這個子專案的範圍。
+        </p>
+      </div>
+
+      <h2>目標與技術選型</h2>
+      <div class="prose">
+        <p>
+          第一階段的目標很明確：從單眼胸腔內視鏡影片恢復相機在世界座標下的
+          <strong>6-DoF 軌跡</strong>與場景的<strong>稀疏 3D 點雲</strong>，不做稠密 mesh、不做呼吸造成的
+          4D 形變建模、也不做跟術前 CT 的配準——那些都是後續階段的範圍。
+          SLAM backbone 選用 <strong>DROID-SLAM</strong>：它是學習型（learning-based）方法，
+          對內視鏡這種<strong>低紋理（textureless）、光源隨鏡頭移動</strong>的場景比傳統幾何法穩健，
+          代價是整條 pipeline 都要 CUDA，只能在有 GPU 的機器上跑最後這一步。
+        </p>
+      </div>
+
+      <div class="figure">
+        <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg" role="img"
+          aria-label="流程示意圖：內視鏡影片先經過 preprocess 做圓形視野偵測、去畸變裁切並自動產生相機內參，接著用自訂的亮度／高光／模糊度篩選取代 DROID 原生的動作篩選，篩出的乾淨影格送進 DROID-SLAM 做學習型光流與 bundle adjustment，最後輸出相機軌跡與稀疏 3D 點雲並用 Open3D 視覺化。">
+          <defs>
+            <linearGradient id="bgOv" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ef5da8" stop-opacity=".09" />
+              <stop offset="1" stop-color="#5b5bd6" stop-opacity=".08" />
+            </linearGradient>
+            <marker id="arrOv" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+              <path d="M0 0l6 3-6 3z" fill="#8b8ba3" />
+            </marker>
+          </defs>
+          <rect width="900" height="300" fill="url(#bgOv)" />
+
+          <!-- step 1: preprocess -->
+          <g transform="translate(24,40)">
+            <rect width="184" height="200" rx="12" fill="#fff" stroke="#d6d6e4" stroke-width="1.6" />
+            <text x="92" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5"
+              fill="#16161d">1. Preprocess</text>
+            <circle cx="92" cy="105" r="55" fill="#f4f4f8" stroke="#8b8ba3" stroke-width="1.4" />
+            <rect x="60" y="73" width="64" height="64" fill="none" stroke="#22a06b" stroke-width="2" />
+            <text x="92" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9"
+              fill="#8b8ba3">FOV 裁切 + calib.txt</text>
+          </g>
+          <path d="M212 140h26" stroke="#8b8ba3" stroke-width="2" fill="none" marker-end="url(#arrOv)" />
+
+          <!-- step 2: custom filter -->
+          <g transform="translate(242,40)">
+            <rect width="184" height="200" rx="12" fill="#fff" stroke="#f2994a" stroke-width="1.8" />
+            <text x="92" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5"
+              fill="#16161d">2. 自訂 Filter</text>
+            <text x="92" y="90" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5"
+              fill="#8b8ba3">brightness</text>
+            <text x="92" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5"
+              fill="#8b8ba3">specular</text>
+            <text x="92" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5"
+              fill="#8b8ba3">lap_var（模糊）</text>
+            <text x="92" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9"
+              fill="#8b8ba3">取代官方 keyframe 篩選</text>
+          </g>
+          <path d="M430 140h26" stroke="#8b8ba3" stroke-width="2" fill="none" marker-end="url(#arrOv)" />
+
+          <!-- step 3: DROID-SLAM -->
+          <g transform="translate(460,40)">
+            <rect width="184" height="200" rx="12" fill="#fff" stroke="#5b5bd6" stroke-width="1.8" />
+            <text x="92" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5"
+              fill="#16161d">3. DROID-SLAM</text>
+            <text x="92" y="100" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="700"
+              font-size="14" fill="#4a4ab8">optical flow</text>
+            <text x="92" y="122" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10.5"
+              fill="#8b8ba3">+ bundle adjustment</text>
+            <text x="92" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9"
+              fill="#8b8ba3">CUDA · RTX 3090</text>
+          </g>
+          <path d="M648 140h26" stroke="#8b8ba3" stroke-width="2" fill="none" marker-end="url(#arrOv)" />
+
+          <!-- step 4: trajectory + points -->
+          <g transform="translate(678,40)">
+            <rect width="198" height="200" rx="12" fill="#fff" stroke="#ef5da8" stroke-width="1.8" />
+            <text x="99" y="26" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="12.5"
+              fill="#16161d">4. Trajectory</text>
+            <polyline points="35,150 60,95 95,115 130,65 165,85" fill="none" stroke="#ef5da8" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round" />
+            <circle cx="50" cy="105" r="1.6" fill="#8b8ba3" />
+            <circle cx="75" cy="130" r="1.6" fill="#8b8ba3" />
+            <circle cx="110" cy="90" r="1.6" fill="#8b8ba3" />
+            <circle cx="140" cy="110" r="1.6" fill="#8b8ba3" />
+            <circle cx="35" cy="150" r="3.5" fill="#ef5da8" />
+            <circle cx="165" cy="85" r="3.5" fill="#ef5da8" />
+            <text x="99" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9"
+              fill="#8b8ba3">+ sparse points · Open3D</text>
+          </g>
+        </svg>
+        <figcaption>Pipeline 總覽：preprocess（FOV 裁切＋校正）→ 自訂 bad-frame filter → DROID-SLAM → 相機軌跡＋稀疏點雲</figcaption>
+      </div>
+
+      <h2>1. Preprocess：圓形視野偵測與去畸變裁切</h2>
+      <div class="prose">
+        <p>
+          內視鏡影像是一個圓形視野（circular FOV）嵌在黑色畫面中央，邊緣扭曲嚴重。
+          Preprocess 階段對前 30 張取樣影格做<strong>圓形偵測</strong>（灰階門檻 + 最大連通元件 +
+          <code
+            style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">minEnclosingCircle</code>），
+          取中位數當作穩健估計，再把半徑往內縮一個比例（預設 15%）丟掉扭曲最嚴重的邊緣，
+          最後裁切成內接正方形——這樣輸出就是 100% 相容官方 DROID-SLAM
+          <code
+            style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">demo.py</code>
+          的矩形影格，不需要額外的 mask 輸入。
+        </p>
+      </div>
+
+      <h2>Camera Calibration</h2>
+      <div class="prose">
+        <p>
+          用印出來的棋盤格（10×22 內角點）在內視鏡下多角度拍攝約 20 張照片，
+          用 OpenCV 分別跑 <strong>5-param</strong>（k1,k2,p1,p2,k3 全自由）與
+          <strong>4-param</strong>（固定 k3=0）兩組模型比較：內視鏡圓形視野的徑向資料範圍不夠大，
+          k3 通常在擬合雜訊而非真實畸變，兩組 RMS 誤差相差在 5% 以內時就選 4-param。
+          這批資料的結果是 <strong>RMS ≈ 0.52 px</strong>（5-param）/ <strong>0.53 px</strong>（4-param），
+          差距 3.3%，確認可以用較簡單的 4-param 模型。
+        </p>
+      </div>
+      <div class="figure">
+        <img src="assets/opverse_calibrate.gif"
+          alt="動畫：內視鏡拍攝的棋盤格校正圖在原始畫面與 cv2.findChessboardCorners 偵測結果之間切換，偵測到的每個內角點標上彩色圓圈與連線，依照棋盤格的行與列分別著色。">
+        <figcaption>cv2.findChessboardCorners 偵測到的角點（依行列上色），確認排序正確才會拿去解相機內參</figcaption>
+      </div>
+
+      <h2>2. 自訂 Bad-frame Filter：符合胸腔內視鏡的特性</h2>
+      <div class="prose">
+        <p>
+          原版 DROID-SLAM 是為一般場景設計的動作篩選（只看光流大小決定 keyframe），
+          但胸腔內視鏡影片有兩個一般場景少見的特性：<strong>組織表面濕潤反光</strong>造成大片高光過曝、
+          以及<strong>器械或組織快速移動</strong>造成動態模糊——這兩種爛幀送進 SLAM 容易產生錯誤的特徵匹配，
+          拖累重建品質。這個專案在 DROID 的動作篩選之外，另外刻了一層依畫質篩選的 filter，
+          對每一幀在 FOV 範圍內算三個指標：
+        </p>
+      </div>
+
+      <div class="prose">
+        <p>
+          門檻是絕對數值（預設過曝 &gt;140、太暗 &lt;50、高光反射比例 &gt;5%），
+          但同一台內視鏡不同片段的亮度中位數可以差到 30 以上，固定門檻某些片段會濾過頭、某些又濾不到，
+          所以實務上會先跑一次<strong>不濾的 filter</strong> 只為了拿 <code
+            style="font-family:var(--font-mono);font-size:.9em;background:var(--bg-subtle);padding:1px 6px;border-radius:5px">frame_metrics.csv</code>，
+          看這支影片自己的分佈（亮度/高光抓 p90~p95，模糊度抓 p5~p10 當門檻）再決定真正要用的參數。
+          濾出來的乾淨幀之後可以<strong>全部</strong>當 keyframe（適合動作幅度小、怕篩過頭的片段），
+          或是<strong>疊加</strong>回 DROID 原生的動作篩選（適合動作幅度夠大的片段）——兩種模式都支援。
+        </p>
+      </div>
+      <div class="figure">
+        <img src="assets/opverse-endoscope-frame.jpg"
+          alt="胸腔內視鏡下拍攝的組織畫面，圓形視野中可見黃色脂肪組織、紅色血管化肌肉組織與帶血管紋理的淡色組織，右側有明顯的鏡面反光亮點。">
+        <figcaption>真實胸腔內視鏡影格：圓形視野、組織表面濕潤造成的鏡面高光，正是 filter 要抓的兩種爛幀特徵之一</figcaption>
+      </div>
+
+      <h2>成果與現況</h2>
+      <div class="prose">
+        <p>
+          篩選後的影格丟進 DROID-SLAM 做學習型光流估計與 bundle adjustment，重建出相機軌跡與場景的稀疏彩色點雲：
+        </p>
+      </div>
+      <div class="figure">
+        <video src="assets/opverse-trajectory-result.mp4" controls loop muted playsinline
+          style="width:100%; display:block; border-radius:var(--radius);"></video>
+        <figcaption>Endoscope reconstruction — live replay：左側是 Open3D 即時重建的彩色點雲與相機軌跡（藍色線框為逐幀相機視錐），右側是對應的內視鏡原始畫面
+        </figcaption>
+      </div>
+      <div class="prose">
+        <p>
+          Pipeline 的 preprocess／calibration／filter 三個階段已經在真實內視鏡素材上跑通並驗證：
+          圓形視野偵測穩定、真實 checkerboard 校正 RMS &lt; 0.6 px、自訂 filter 能量化區分正常與過曝/高光影格。
+          因為沒有 ground truth 軌跡（沒有光學追蹤或機械臂座標可比對），評估先採計畫書訂的代用指標：
+        </p>
+        <ul style="padding-left:1.2em; margin:12px 0 0; display:flex; flex-direction:column; gap:6px;">
+          <li><strong>Frame registration rate：</strong>成功 register 的影格數 / 全片有效影格數，目標 ≥ 80%</li>
+          <li><strong>Trajectory smoothness：</strong>相鄰姿態間的速度／角速度是否有異常跳躍</li>
+          <li><strong>Loop closure consistency：</strong>鏡頭來回掃過同一區域時，點雲是否對齊</li>
+          <li><strong>Visual sanity check：</strong>把稀疏點雲投影回影像，檢查是否落在合理的組織表面上</li>
+        </ul>
+      </div>
+
+      <div class="callout">
+        <p><strong>學到的事：</strong>把一套為一般場景設計的 learning-based SLAM 套用到醫療影像上，
+          真正的工程量不是換掉演算法，而是<strong>正確理解資料的物理特性</strong>——內視鏡的圓形視野、
+          邊緣扭曲、組織反光、呼吸造成的形變，每一個都會讓「直接套官方 demo.py」的結果看起來能跑，
+          實際上軌跡是錯的。自訂 filter 的門檻也再次印證：<strong>固定的絕對閾值在跨片段時不可靠</strong>，
+          得先看過資料自己的分佈，再決定要濾多嚴。</p>
+      </div>
+
+      <div class="tags">
+        <span class="tag">Python</span><span class="tag">DROID-SLAM</span><span class="tag">OpenCV</span>
+        <span class="tag">Open3D</span><span class="tag">Docker</span><span class="tag">CUDA</span>
+      </div>
+
+    </div>
+
+    <nav class="proj-nav wrap">
+      <a class="prev" href="campus-map.html">
+        <span class="dir">↑ 上一個</span>
+        <span class="title">校園地圖</span>
+      </a>
+      <a class="next" href="visual-odometry.html">
+        <span class="dir">下一個 ↓</span>
+        <span class="title">Visual Odometry</span>
+      </a>
+    </nav>
+  </main>
+
+  <footer class="wrap">
+    <span>© <span id="year">2026</span> Huan（Peng Tzu-Huan）</span>
+    <a href="../index.html#projects">回作品列表</a>
+  </footer>
+
+  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</body>
+
+</html>
